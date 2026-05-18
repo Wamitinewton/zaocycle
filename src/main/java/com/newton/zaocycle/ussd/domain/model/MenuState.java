@@ -1,0 +1,17 @@
+package com.newton.zaocycle.ussd.domain.model;
+
+public enum MenuState {
+    WELCOME,
+    REGISTER_NAME,
+    REGISTER_WARD,
+    REGISTER_PIN,
+    MAIN_MENU,
+    LOG_SPRAY_CROP,
+    LOG_SPRAY_CHEMICAL,
+    LOG_SPRAY_QUANTITY,
+    LOG_SPRAY_CONFIRM,
+    CHECK_HARVEST,
+    SCHEDULE_PICKUP,
+    CHECK_EARNINGS,
+    TERMINATED
+}

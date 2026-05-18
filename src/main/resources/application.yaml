@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: zaocycle-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/zaocycle}
+    username: ${DB_USERNAME:zaocycle}
+    password: ${DB_PASSWORD:zaocycle}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc.time_zone: Africa/Nairobi
+        format_sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+server:
+  port: ${SERVER_PORT:8080}
+  forward-headers-strategy: framework
+  compression:
+    enabled: true
+
+africastalking:
+  api-key: ${AT_API_KEY:}
+  username: ${AT_USERNAME:sandbox}
+  sender-id: ${AT_SENDER_ID:ZAOCYCLE}
+  base-url: ${AT_BASE_URL:https://api.sandbox.africastalking.com}
+  service-code: ${AT_SERVICE_CODE:*384*1659#}
+
+zaocycle:
+  ussd:
+    session-ttl-minutes: 5
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    com.newton.zaocycle: DEBUG
+    org.hibernate.SQL: WARN
