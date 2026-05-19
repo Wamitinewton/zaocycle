@@ -1,5 +1,6 @@
 package com.newton.zaocycle.ussd.infrastructure.africastalking;
 
+import com.newton.zaocycle.shared.infrastructure.africastalking.AfricasTalkingProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,6 @@ public class AfricasTalkingSmsClient {
     }
 
     public void sendSms(String phoneNumber, String message) {
-        log.info("[SMS-STUB] To={} From={} Message={}", phoneNumber, props.getSenderId(), message);
+        log.info("[SMS-STUB] To={} From={} Message={}", phoneNumber, props.senderId(), message);
     }
 }

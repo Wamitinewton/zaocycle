@@ -35,6 +35,11 @@ public final class PesticideApplication {
         this.updatedAt = updatedAt;
     }
 
+    public void markSafe() {
+        this.status = ApplicationStatus.SAFE;
+        this.updatedAt = Instant.now();
+    }
+
     public UUID id()                    { return id; }
     public UUID farmerId()              { return farmerId; }
     public UUID chemicalId()            { return chemicalId; }

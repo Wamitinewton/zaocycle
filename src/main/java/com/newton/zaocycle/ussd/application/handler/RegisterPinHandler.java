@@ -55,6 +55,7 @@ public class RegisterPinHandler implements MenuHandler {
                 PhoneNumber.of(session.getPhoneNumber()), fullName, ward, input.trim());
         try {
             Farmer farmer = farmerService.register(command);
+            session.put("farmerId", farmer.id().toString());
             session.setState(MenuState.TERMINATED);
             return ResponseBuilder.end(
                     "Welcome to ZaoCycle, " + firstName(farmer.fullName()) + ".\n"

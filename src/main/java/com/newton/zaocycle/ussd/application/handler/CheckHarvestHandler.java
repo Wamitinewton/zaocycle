@@ -1,40 +1,29 @@
 package com.newton.zaocycle.ussd.application.handler;
 
-import com.newton.zaocycle.chemical.application.ChemicalService;
-import com.newton.zaocycle.farmer.application.FarmerService;
 import com.newton.zaocycle.pesticide.application.PesticideApplicationService;
+import com.newton.zaocycle.pesticide.domain.model.ApplicationStatus;
 import com.newton.zaocycle.pesticide.domain.model.PesticideApplication;
-import com.newton.zaocycle.shared.domain.PhoneNumber;
 import com.newton.zaocycle.ussd.application.response.MenuResponse;
 import com.newton.zaocycle.ussd.application.response.ResponseBuilder;
 import com.newton.zaocycle.ussd.domain.model.MenuState;
 import com.newton.zaocycle.ussd.domain.model.UssdSession;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Component
 public class CheckHarvestHandler implements MenuHandler {
 
-    private static final int MAX_DISPLAY = 3;
-    private static final ZoneId NAIROBI = ZoneId.of("Africa/Nairobi");
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy");
+    private static final DateTimeFormatter SHORT_DATE =
+            DateTimeFormatter.ofPattern("d MMM").withLocale(Locale.ENGLISH);
 
-    private final FarmerService farmerService;
     private final PesticideApplicationService pesticideService;
-    private final ChemicalService chemicalService;
 
-    public CheckHarvestHandler(FarmerService farmerService,
-                                PesticideApplicationService pesticideService,
-                                ChemicalService chemicalService) {
-        this.farmerService = farmerService;
+    public CheckHarvestHandler(PesticideApplicationService pesticideService) {
         this.pesticideService = pesticideService;
-        this.chemicalService = chemicalService;
     }
 
     @Override
@@ -44,46 +33,41 @@ public class CheckHarvestHandler implements MenuHandler {
 
     @Override
     public MenuResponse handle(UssdSession session, String input) {
-        var farmer = farmerService.findOrCreateByPhone(
-                PhoneNumber.of(session.getPhoneNumber()));
+        UUID farmerId = UUID.fromString(session.getString("farmerId"));
+        List<PesticideApplication> recent = pesticideService.findRecentByFarmer(farmerId, 14);
 
-        List<PesticideApplication> pending = pesticideService
-                .getPendingByFarmer(farmer.id())
-                .stream()
-                .sorted(Comparator.comparing(PesticideApplication::safeHarvestDate))
-                .toList();
-
-        if (pending.isEmpty()) {
-            session.setState(MenuState.MAIN_MENU);
-            return ResponseBuilder.end(
-                    "All your crops are safe to harvest.\n"
-                            + "No active pesticide applications recorded.");
+        if (recent.isEmpty()) {
+            session.setState(MenuState.TERMINATED);
+            return ResponseBuilder.end("No recent sprays logged.\nUse menu 1 to log a spray.");
         }
 
-        LocalDate today = LocalDate.now(NAIROBI);
-        StringBuilder sb = new StringBuilder("Your safe harvest dates:\n");
-
-        List<PesticideApplication> toShow = pending.subList(0, Math.min(MAX_DISPLAY, pending.size()));
-        for (PesticideApplication app : toShow) {
-            String chemName = resolveChemicalName(app.chemicalId());
-            boolean isSafe = !app.safeHarvestDate().isAfter(today);
-            String label = isSafe ? "SAFE NOW" : app.safeHarvestDate().format(DATE_FORMAT);
-            sb.append(app.crop()).append(" (").append(chemName).append("): ").append(label).append("\n");
+        StringBuilder sb = new StringBuilder("Your harvest schedule:\n");
+        int limit = Math.min(recent.size(), 4);
+        for (int i = 0; i < limit; i++) {
+            PesticideApplication app = recent.get(i);
+            sb.append(i + 1).append(". ")
+              .append(truncate(app.crop(), 10)).append(" ")
+              .append(SHORT_DATE.format(app.safeHarvestDate())).append(" ")
+              .append(statusLabel(app.status())).append("\n");
+        }
+        if (recent.size() > limit) {
+            sb.append("(").append(recent.size() - limit).append(" more)\n");
         }
 
-        if (pending.size() > MAX_DISPLAY) {
-            sb.append("... and ").append(pending.size() - MAX_DISPLAY).append(" more.\n");
-        }
-
-        session.setState(MenuState.MAIN_MENU);
+        session.setState(MenuState.TERMINATED);
         return ResponseBuilder.end(sb.toString().trim());
     }
 
-    private String resolveChemicalName(UUID chemicalId) {
-        try {
-            return chemicalService.getById(chemicalId).name();
-        } catch (Exception e) {
-            return "Unknown";
-        }
+    private static String truncate(String text, int max) {
+        if (text == null) return "";
+        return text.length() <= max ? text : text.substring(0, max);
+    }
+
+    private static String statusLabel(ApplicationStatus status) {
+        return switch (status) {
+            case SAFE -> "READY";
+            case PENDING -> "wait";
+            default -> "done";
+        };
     }
 }

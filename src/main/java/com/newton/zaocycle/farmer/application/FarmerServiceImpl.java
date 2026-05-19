@@ -6,29 +6,35 @@ import com.newton.zaocycle.farmer.domain.model.Farmer;
 import com.newton.zaocycle.farmer.domain.port.FarmerRepository;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
 import com.newton.zaocycle.shared.exception.NotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
 class FarmerServiceImpl implements FarmerService {
 
     private final FarmerRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
-    FarmerServiceImpl(FarmerRepository repository) {
+    FarmerServiceImpl(FarmerRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Farmer> findByPhone(PhoneNumber phone) {
         return repository.findByPhone(phone);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Farmer> findById(UUID id) {
+        return repository.findById(id);
     }
 
     @Override
@@ -41,7 +47,7 @@ class FarmerServiceImpl implements FarmerService {
     public Farmer register(RegisterFarmerCommand command) {
         Farmer farmer = repository.findByPhone(command.phone())
                 .orElseThrow(() -> new NotFoundException("Farmer not found for: " + command.phone().value()));
-        farmer.completeRegistration(command.fullName(), command.ward(), hashPin(command.pin()));
+        farmer.completeRegistration(command.fullName(), command.ward(), passwordEncoder.encode(command.pin()));
         return repository.save(farmer);
     }
 
@@ -52,16 +58,5 @@ class FarmerServiceImpl implements FarmerService {
                 .orElseThrow(() -> new NotFoundException("Farmer not found: " + phone.value()));
         return new FarmerSummary(farmer.id(), farmer.phone().value(),
                 farmer.fullName(), farmer.isRegistrationComplete());
-    }
-
-    private String hashPin(String pin) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(pin.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(hash);
-        } catch (NoSuchAlgorithmException e) {
-            // SHA-256 is guaranteed by the JVM spec — this cannot happen
-            throw new RuntimeException("SHA-256 not available", e);
-        }
     }
 }

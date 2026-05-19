@@ -37,6 +37,14 @@ public class UssdSession {
         return v != null ? v.toString() : null;
     }
 
+    public Object get(String key) {
+        return data.get(key);
+    }
+
+    public boolean has(String key) {
+        return data.get(key) != null;
+    }
+
     public int getInt(String key, int defaultValue) {
         Object v = data.get(key);
         if (v == null) return defaultValue;

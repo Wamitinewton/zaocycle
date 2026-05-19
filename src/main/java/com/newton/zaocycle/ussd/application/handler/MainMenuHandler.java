@@ -1,24 +1,20 @@
 package com.newton.zaocycle.ussd.application.handler;
 
+import com.newton.zaocycle.ussd.application.MenuDispatcher;
 import com.newton.zaocycle.ussd.application.response.MenuResponse;
 import com.newton.zaocycle.ussd.application.response.ResponseBuilder;
 import com.newton.zaocycle.ussd.domain.model.MenuState;
 import com.newton.zaocycle.ussd.domain.model.UssdSession;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MainMenuHandler implements MenuHandler {
 
-    private final CheckHarvestHandler checkHarvestHandler;
-    private final SchedulePickupHandler schedulePickupHandler;
-    private final CheckEarningsHandler checkEarningsHandler;
+    private final MenuDispatcher menuDispatcher;
 
-    public MainMenuHandler(CheckHarvestHandler checkHarvestHandler,
-                           SchedulePickupHandler schedulePickupHandler,
-                           CheckEarningsHandler checkEarningsHandler) {
-        this.checkHarvestHandler = checkHarvestHandler;
-        this.schedulePickupHandler = schedulePickupHandler;
-        this.checkEarningsHandler = checkEarningsHandler;
+    public MainMenuHandler(@Lazy MenuDispatcher menuDispatcher) {
+        this.menuDispatcher = menuDispatcher;
     }
 
     @Override
@@ -31,19 +27,19 @@ public class MainMenuHandler implements MenuHandler {
         return switch (input) {
             case "1" -> {
                 session.setState(MenuState.LOG_SPRAY_CROP);
-                yield ResponseBuilder.cont(LogSprayCropHandler.cropMenuText());
+                yield menuDispatcher.dispatch(session, "");
             }
             case "2" -> {
                 session.setState(MenuState.CHECK_HARVEST);
-                yield checkHarvestHandler.handle(session, "");
+                yield menuDispatcher.dispatch(session, "");
             }
             case "3" -> {
-                session.setState(MenuState.SCHEDULE_PICKUP);
-                yield schedulePickupHandler.handle(session, "");
+                session.setState(MenuState.SCHEDULE_PICKUP_SELECT);
+                yield menuDispatcher.dispatch(session, "");
             }
             case "4" -> {
                 session.setState(MenuState.CHECK_EARNINGS);
-                yield checkEarningsHandler.handle(session, "");
+                yield menuDispatcher.dispatch(session, "");
             }
             case "0" -> {
                 session.setState(MenuState.TERMINATED);
@@ -51,12 +47,12 @@ public class MainMenuHandler implements MenuHandler {
             }
             default -> ResponseBuilder.cont(
                     """
-                            Invalid choice.
-                            1. Log pesticide spray
-                            2. Check safe harvest date
-                            3. Schedule waste pickup
-                            4. My earnings
-                            0. Exit""");
+                    Invalid choice.
+                    1. Log pesticide spray
+                    2. Check safe harvest date
+                    3. Schedule waste pickup
+                    4. My earnings
+                    0. Exit""");
         };
     }
 }

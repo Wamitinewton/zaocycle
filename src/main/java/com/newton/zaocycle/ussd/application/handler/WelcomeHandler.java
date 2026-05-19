@@ -28,6 +28,7 @@ public class WelcomeHandler implements MenuHandler {
         Farmer farmer = farmerService.findOrCreateByPhone(PhoneNumber.of(session.getPhoneNumber()));
 
         if (farmer.isRegistrationComplete()) {
+            session.put("farmerId", farmer.id().toString());
             session.setState(MenuState.MAIN_MENU);
             return ResponseBuilder.cont(
                     "Karibu, " + firstName(farmer.fullName()) + ".\n"

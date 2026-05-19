@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew compileJava *)",
+      "Bash(./gradlew clean *)",
+      "Bash(PGPASSWORD=zaocycle psql -h localhost -U zaocycle -d zaocycle -f /home/newton/Desktop/projects/zaocyclebackend/src/main/resources/db/migration/V10__init_sms_tables.sql)"
+    ]
+  }
+}

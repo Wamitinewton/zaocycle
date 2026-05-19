@@ -10,4 +10,8 @@ public interface PesticideApplicationService {
     PesticideApplication log(LogPesticideApplicationCommand command);
     List<PesticideApplication> getByFarmer(UUID farmerId);
     List<PesticideApplication> getPendingByFarmer(UUID farmerId);
+    PesticideApplication markSafe(UUID applicationId);
+    PesticideApplication findById(UUID applicationId);
+    List<PesticideApplication> findRecentByFarmer(UUID farmerId, int days);
+    List<PesticideApplication> findReadyForPickup(UUID farmerId);
 }

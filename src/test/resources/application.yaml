@@ -1,0 +1,63 @@
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc.time_zone: Africa/Nairobi
+        format_sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  quartz:
+    job-store-type: memory
+    overwrite-existing-jobs: true
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: ZaoCycleScheduler
+            instanceId: AUTO
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 5
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+
+jwt:
+  secret: ${JWT_SECRET:test-secret-key-for-tests-must-be-32-chars}
+  access-token-minutes: 15
+  refresh-token-days: 30
+
+africastalking:
+  api-key: ${AT_API_KEY:}
+  username: ${AT_USERNAME:sandbox}
+  sender-id: ${AT_SENDER_ID:ZAOCYCLE}
+  base-url: ${AT_BASE_URL:https://api.sandbox.africastalking.com}
+  service-code: ${AT_SERVICE_CODE:*384*1659#}
+
+zaocycle:
+  ussd:
+    session-ttl-minutes: 5
+  certification:
+    verify-base-url: ${VERIFY_BASE_URL:https://zaocycle.app}
+    expires-after-days: 14
+  payment:
+    rate-per-kg: ${PAYOUT_RATE_PER_KG:5.00}
+  storage:
+    provider: LOCAL_FS
+    local-fs:
+      base-path: ./var/storage
+      public-url-prefix: http://localhost:8080/files
+    spaces:
+      endpoint: https://sfo3.digitaloceanspaces.com
+      region: sfo3
+      bucket: test-bucket
+      access-key: test-key
+      secret-key: test-secret
+
+logging:
+  level:
+    com.newton.zaocycle: WARN
+    org.hibernate.SQL: WARN

@@ -1,6 +1,7 @@
 spring:
   application:
     name: zaocycle-backend
+
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/zaocycle}
     username: ${DB_USERNAME:zaocycle}
@@ -20,6 +21,28 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    overwrite-existing-jobs: true
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: ZaoCycleScheduler
+            instanceId: AUTO
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: QRTZ_
+            isClustered: false
+            misfireThreshold: 60000
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+
 server:
   port: ${SERVER_PORT:8080}
   forward-headers-strategy: framework
@@ -33,9 +56,42 @@ africastalking:
   base-url: ${AT_BASE_URL:https://api.sandbox.africastalking.com}
   service-code: ${AT_SERVICE_CODE:*384*1659#}
 
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-minutes: 15
+  refresh-token-days: 30
+
+daraja:
+  base-url: ${DARAJA_BASE_URL:https://sandbox.safaricom.co.ke}
+  consumer-key: ${DARAJA_CONSUMER_KEY:}
+  consumer-secret: ${DARAJA_CONSUMER_SECRET:}
+  shortcode: ${DARAJA_SHORTCODE:600000}
+  initiator-name: ${DARAJA_INITIATOR:testapi}
+  security-credential: ${DARAJA_SECURITY_CREDENTIAL:}
+  b2c-result-url: ${DARAJA_B2C_RESULT_URL:https://example.com/mpesa/b2c/result}
+  b2c-timeout-url: ${DARAJA_B2C_TIMEOUT_URL:https://example.com/mpesa/b2c/timeout}
+  stk-passkey: ${DARAJA_STK_PASSKEY:}
+  stk-callback-url: ${DARAJA_STK_CALLBACK_URL:https://example.com/mpesa/stkpush/callback}
+
 zaocycle:
   ussd:
     session-ttl-minutes: 5
+  certification:
+    verify-base-url: ${VERIFY_BASE_URL:https://zaocycle.app}
+    expires-after-days: 14
+  payment:
+    rate-per-kg: ${PAYOUT_RATE_PER_KG:5.00}
+  storage:
+    provider: ${STORAGE_PROVIDER:SPACES}
+    local-fs:
+      base-path: ${LOCAL_FS_BASE:./var/storage}
+      public-url-prefix: ${LOCAL_FS_URL:http://localhost:8080/files}
+    spaces:
+      endpoint: ${SPACES_ENDPOINT:https://sfo3.digitaloceanspaces.com}
+      region: ${SPACES_REGION:sfo3}
+      bucket: ${SPACES_BUCKET:sampleokoasem}
+      access-key: ${SPACES_ACCESS_KEY}
+      secret-key: ${SPACES_SECRET_KEY}
 
 management:
   endpoints:
