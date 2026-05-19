@@ -46,19 +46,21 @@ The web frontend serves **buyers** and **cooperative staff/admin**. Farmers and 
 
 ## 2. Technology Stack
 
-| Layer | Recommended Choice | Notes |
+| Layer | Choice | Notes |
 |---|---|---|
-| Framework | **React 18** with **TypeScript** | Vite for build tooling |
-| Routing | **React Router v6** | Nested layouts for portals |
-| Data fetching | **TanStack Query (React Query) v5** | Cache management, background refetch |
-| HTTP client | **Axios** | Interceptors for auth tokens |
-| State | **Zustand** | Auth state; TanStack Query handles server state |
+| Framework | **Next.js 14+ (App Router)** with **TypeScript** | File-based routing, Server Components, built-in image optimisation |
+| Routing | **Next.js App Router** | Built-in — no React Router needed |
+| Auth guard | **Next.js Middleware** (`middleware.ts`) | JWT check at the edge before page render |
+| Data fetching | **TanStack Query (React Query) v5** | Client-side cache, background refetch in Client Components |
+| HTTP client | **Axios** | Interceptors for auth tokens (Client Components only) |
+| State | **Zustand** | Auth state in Client Components; server state via TanStack Query |
 | Forms | **React Hook Form + Zod** | Schema validation aligned with backend constraints |
 | UI components | **shadcn/ui + Tailwind CSS** | Accessible, composable, unstyled base |
 | Icons | **Lucide React** | Consistent icon set |
 | Date handling | **date-fns** | ISO date formatting |
+| Images | **next/image** | Automatic optimisation and lazy loading |
 | QR rendering | **qrcode.react** | For displaying generated QR codes |
-| Notifications | **Sonner (react-hot-toast alternative)** | Toast notifications |
+| Notifications | **Sonner** | Toast notifications |
 
 ---
 
@@ -81,93 +83,166 @@ The frontend has three distinct authenticated areas:
 
 ## 4. Application Architecture
 
+Next.js App Router uses the `app/` directory. Route groups `(group)` create shared layouts without adding URL segments.
+
 ```
-src/
-├── api/                    # API client layer
-│   ├── client.ts           # Axios instance + interceptors
-│   ├── auth.ts
-│   ├── buyer.ts
-│   ├── products.ts
-│   ├── orders.ts
-│   ├── pickups.ts
-│   ├── inventory.ts
-│   ├── certificates.ts
-│   ├── chemicals.ts
-│   ├── staff.ts
-│   └── riders.ts
-├── components/
-│   ├── ui/                 # shadcn/ui base components
-│   ├── layout/             # AppShell, Sidebar, Navbar, Footer
-│   ├── auth/               # LoginForm, ProtectedRoute, RoleGuard
-│   ├── buyer/              # OrderCard, ProductCard, BuyerProfileForm
-│   ├── dashboard/          # PickupTable, PickupFilters, OrderStatusBadge
-│   ├── admin/              # StaffForm, RiderForm
-│   └── shared/             # PageHeader, EmptyState, LoadingSpinner, ErrorBoundary
-├── hooks/                  # Custom React hooks wrapping TanStack Query
+zaocycle-web/
+├── app/                            # Next.js App Router root
+│   ├── layout.tsx                  # Root layout (fonts, providers)
+│   ├── page.tsx                    # Landing page /
+│   ├── products/
+│   │   └── page.tsx                # /products  (Server Component)
+│   ├── verify/
+│   │   └── [token]/
+│   │       └── page.tsx            # /verify/:token  (Server Component)
+│   ├── login/
+│   │   └── page.tsx                # /login
+│   ├── register/
+│   │   └── page.tsx                # /register
+│   │
+│   ├── (portal)/                   # Route group — Buyer portal layout
+│   │   ├── layout.tsx              # Portal shell (sidebar, top bar)
+│   │   └── portal/
+│   │       ├── home/page.tsx
+│   │       ├── products/page.tsx
+│   │       ├── orders/
+│   │       │   ├── page.tsx
+│   │       │   └── [id]/page.tsx
+│   │       └── profile/page.tsx
+│   │
+│   ├── (dashboard)/                # Route group — Staff dashboard layout
+│   │   ├── layout.tsx
+│   │   └── dashboard/
+│   │       ├── overview/page.tsx
+│   │       ├── pickups/
+│   │       │   ├── page.tsx
+│   │       │   └── [id]/page.tsx
+│   │       ├── orders/
+│   │       │   ├── page.tsx
+│   │       │   └── [id]/page.tsx
+│   │       ├── inventory/page.tsx
+│   │       └── certificates/
+│   │           ├── page.tsx
+│   │           └── [id]/page.tsx
+│   │
+│   └── (admin)/                    # Route group — Admin panel layout
+│       ├── layout.tsx
+│       └── admin/
+│           ├── staff/
+│           │   ├── page.tsx
+│           │   ├── new/page.tsx
+│           │   └── [id]/page.tsx
+│           └── riders/
+│               ├── page.tsx
+│               ├── new/page.tsx
+│               └── [id]/page.tsx
+│
+├── middleware.ts                   # Edge auth guard (JWT role check)
+│
+├── lib/
+│   ├── api/                        # API client layer (Axios, used in Client Components)
+│   │   ├── client.ts               # Axios instance + interceptors
+│   │   ├── auth.ts
+│   │   ├── buyer.ts
+│   │   ├── products.ts
+│   │   ├── orders.ts
+│   │   ├── pickups.ts
+│   │   ├── inventory.ts
+│   │   ├── certificates.ts
+│   │   ├── chemicals.ts
+│   │   ├── staff.ts
+│   │   └── riders.ts
+│   ├── formatters.ts               # KES, kg, date formatters
+│   └── validators.ts               # Shared Zod schemas
+│
+├── hooks/                          # Client Component hooks (TanStack Query)
 │   ├── useAuth.ts
 │   ├── useProducts.ts
 │   ├── useOrders.ts
 │   └── ...
-├── pages/
-│   ├── public/             # Landing, Products, CertVerify, Login, Register
-│   ├── portal/             # Buyer: Home, Orders, Profile
-│   └── dashboard/          # Staff: Pickups, Orders, Inventory, Certificates
-│       └── admin/          # Staff, Riders
+│
 ├── store/
-│   └── authStore.ts        # Zustand store: tokens, user, login/logout
-├── lib/
-│   ├── formatters.ts       # Currency (KES), weight, date formatters
-│   └── validators.ts       # Shared Zod schemas
-├── router.tsx              # Route definitions
-└── main.tsx
+│   └── authStore.ts                # Zustand — tokens, user, login/logout
+│
+└── components/
+    ├── ui/                         # shadcn/ui base components
+    ├── layout/                     # AppShell, Sidebar, Navbar, Footer
+    ├── auth/                       # LoginForm, RoleGuard
+    ├── buyer/                      # OrderCard, ProductCard, BuyerProfileForm
+    ├── dashboard/                  # PickupTable, PickupFilters, OrderStatusBadge
+    ├── admin/                      # StaffForm, RiderForm
+    └── shared/                     # PageHeader, EmptyState, LoadingSkeleton
 ```
+
+### Server vs Client Components
+
+| Use a **Server Component** when | Use a **Client Component** (`'use client'`) when |
+|---|---|
+| Fetching public data (products, verify page) | Reading from Zustand (auth state) |
+| Page-level data that doesn't need interactivity | Forms, modals, event handlers |
+| Reducing JS bundle size | TanStack Query hooks |
+| Reading from cookies on the server | Pagination controls, filters |
+
+Public pages (`/products`, `/verify/[token]`) can be Server Components that `fetch` directly from the backend, skipping the Axios client entirely.
 
 ---
 
 ## 5. Routing Map
 
+Next.js App Router file → URL mapping:
+
 ```
-/                           → Landing page (public)
-/products                   → Product listing (public)
-/verify/:token              → Certificate verification (public)
-/login                      → Unified login page (role-aware redirect)
-/register                   → Buyer registration
+app/page.tsx                              → /
+app/products/page.tsx                     → /products
+app/verify/[token]/page.tsx               → /verify/:token
+app/login/page.tsx                        → /login
+app/register/page.tsx                     → /register
 
-/portal                     → Buyer layout (requires BUYER role)
-  /portal/home              → Buyer home / quick order
-  /portal/products          → Browse products
-  /portal/orders            → Order history
-  /portal/orders/:id        → Order detail
-  /portal/profile           → Profile & settings
+app/(portal)/portal/home/page.tsx         → /portal/home
+app/(portal)/portal/products/page.tsx     → /portal/products
+app/(portal)/portal/orders/page.tsx       → /portal/orders
+app/(portal)/portal/orders/[id]/page.tsx  → /portal/orders/:id
+app/(portal)/portal/profile/page.tsx      → /portal/profile
 
-/dashboard                  → Staff layout (requires COOP_MANAGER or ADMIN)
-  /dashboard/overview       → Summary stats
-  /dashboard/pickups        → Pickup management
-  /dashboard/pickups/:id    → Pickup detail
-  /dashboard/orders         → Order management
-  /dashboard/orders/:id     → Order detail
-  /dashboard/inventory      → Intake + batch + stock view
-  /dashboard/certificates   → Certificate list
-  /dashboard/certificates/:id → Certificate detail
+app/(dashboard)/dashboard/overview/page.tsx          → /dashboard/overview
+app/(dashboard)/dashboard/pickups/page.tsx            → /dashboard/pickups
+app/(dashboard)/dashboard/pickups/[id]/page.tsx       → /dashboard/pickups/:id
+app/(dashboard)/dashboard/orders/page.tsx             → /dashboard/orders
+app/(dashboard)/dashboard/orders/[id]/page.tsx        → /dashboard/orders/:id
+app/(dashboard)/dashboard/inventory/page.tsx          → /dashboard/inventory
+app/(dashboard)/dashboard/certificates/page.tsx       → /dashboard/certificates
+app/(dashboard)/dashboard/certificates/[id]/page.tsx  → /dashboard/certificates/:id
 
-/admin                      → Admin layout (requires ADMIN)
-  /admin/staff              → Staff list
-  /admin/staff/new          → Create staff
-  /admin/staff/:id          → Staff detail
-  /admin/riders             → Rider list
-  /admin/riders/new         → Register rider
-  /admin/riders/:id         → Rider detail
+app/(admin)/admin/staff/page.tsx          → /admin/staff
+app/(admin)/admin/staff/new/page.tsx      → /admin/staff/new
+app/(admin)/admin/staff/[id]/page.tsx     → /admin/staff/:id
+app/(admin)/admin/riders/page.tsx         → /admin/riders
+app/(admin)/admin/riders/new/page.tsx     → /admin/riders/new
+app/(admin)/admin/riders/[id]/page.tsx    → /admin/riders/:id
 ```
+
+Route group layouts (`(portal)`, `(dashboard)`, `(admin)`) each have a `layout.tsx` that renders the appropriate sidebar/shell for that section.
 
 ---
 
 ## 6. Authentication Flow
 
 ### Token Storage
-Store tokens in **memory (Zustand)** only. Do not use `localStorage` for access tokens. Use an **httpOnly cookie** for the refresh token if the backend supports it; otherwise store the refresh token in `localStorage` with awareness of XSS risk.
+
+| Token | Where to store |
+|---|---|
+| Access token (15 min) | **Zustand in-memory only** — never persisted |
+| Refresh token (30 days) | **`localStorage`** via Zustand `persist` (acceptable for SPAs; use httpOnly cookie if backend adds cookie support) |
+| User summary (role, id, name) | **`localStorage`** via Zustand `persist` |
+
+### Zustand Auth Store
 
 ```ts
 // store/authStore.ts
+'use client';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
@@ -175,54 +250,157 @@ interface AuthState {
   login: (tokenResponse: TokenResponse) => void;
   logout: () => void;
 }
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      user: null,
+      login: (t) => set({ accessToken: t.accessToken, refreshToken: t.refreshToken, user: t.user }),
+      logout: () => set({ accessToken: null, refreshToken: null, user: null }),
+    }),
+    {
+      name: 'zao-auth',
+      // Only persist refresh token and user; access token is always in-memory
+      partialize: (s) => ({ refreshToken: s.refreshToken, user: s.user }),
+    }
+  )
+);
 ```
 
 ### Axios Interceptors
 
+The Axios client is only used inside Client Components and hooks. Do not import it in Server Components.
+
 ```ts
-// api/client.ts
-axiosInstance.interceptors.request.use((config) => {
-  const token = authStore.getState().accessToken;
+// lib/api/client.ts
+import axios from 'axios';
+import { useAuthStore } from '@/store/authStore';
+
+export const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+  timeout: 15000,
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().accessToken;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-axiosInstance.interceptors.response.use(
+apiClient.interceptors.response.use(
   (res) => res,
   async (error) => {
     if (error.response?.status === 401 && !error.config._retry) {
       error.config._retry = true;
-      const newTokens = await refreshTokens();
-      authStore.getState().login(newTokens);
-      error.config.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-      return axiosInstance(error.config);
+      const { refreshToken, login, logout } = useAuthStore.getState();
+      if (!refreshToken) { logout(); return Promise.reject(error); }
+      try {
+        const { data } = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
+          { refreshToken }
+        );
+        login(data);
+        error.config.headers.Authorization = `Bearer ${data.accessToken}`;
+        return apiClient(error.config);
+      } catch {
+        logout();
+        window.location.href = '/login';
+      }
     }
-    return Promise.reject(error);
+    const message = error.response?.data?.message ?? 'An unexpected error occurred';
+    return Promise.reject(new Error(message));
   }
 );
 ```
 
-### Role-Based Redirects
+### Next.js Middleware — Route Protection
 
-After login, use the `role` in the token response to redirect:
+`middleware.ts` at the project root runs at the Edge before any page renders. It reads the stored user from a cookie (or redirects to login if missing). The simplest approach is to store a non-sensitive `role` cookie alongside the token:
 
-| Role | Redirect |
-|---|---|
-| `BUYER` | `/portal/home` |
-| `COOP_MANAGER` | `/dashboard/overview` |
-| `ADMIN` | `/dashboard/overview` |
+```ts
+// middleware.ts
+import { NextRequest, NextResponse } from 'next/server';
 
-### Protected Routes
+const PORTAL_ROLES   = ['BUYER'];
+const DASHBOARD_ROLES = ['COOP_MANAGER', 'ADMIN'];
+const ADMIN_ROLES    = ['ADMIN'];
+
+export function middleware(req: NextRequest) {
+  const role = req.cookies.get('zao-role')?.value;
+  const { pathname } = req.nextUrl;
+
+  const loginUrl = req.nextUrl.clone();
+  loginUrl.pathname = '/login';
+
+  if (pathname.startsWith('/portal') && !PORTAL_ROLES.includes(role ?? ''))
+    return NextResponse.redirect(loginUrl);
+
+  if (pathname.startsWith('/dashboard') && !DASHBOARD_ROLES.includes(role ?? ''))
+    return NextResponse.redirect(loginUrl);
+
+  if (pathname.startsWith('/admin') && !ADMIN_ROLES.includes(role ?? ''))
+    return NextResponse.redirect(loginUrl);
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/portal/:path*', '/dashboard/:path*', '/admin/:path*'],
+};
+```
+
+On login success, write the role cookie alongside storing tokens in Zustand:
+```ts
+document.cookie = `zao-role=${tokens.user.role}; path=/; SameSite=Strict`;
+```
+On logout, clear it:
+```ts
+document.cookie = 'zao-role=; Max-Age=0; path=/';
+```
+
+### Role-Based Redirects After Login
+
+```ts
+// In the login page Client Component
+const ROLE_REDIRECT: Record<string, string> = {
+  BUYER:        '/portal/home',
+  COOP_MANAGER: '/dashboard/overview',
+  ADMIN:        '/dashboard/overview',
+};
+
+const router = useRouter();
+// after login API call:
+router.push(ROLE_REDIRECT[tokens.user.role] ?? '/');
+```
+
+### App Initialisation — Restore Access Token
+
+On first render the access token is gone (in-memory only). Silently refresh it using the persisted refresh token:
 
 ```tsx
-// components/auth/ProtectedRoute.tsx
-function ProtectedRoute({ allowedRoles }: { allowedRoles: string[] }) {
-  const user = useAuthStore((s) => s.user);
-  if (!user) return <Navigate to="/login" replace />;
-  if (!allowedRoles.includes(user.role)) return <Navigate to="/unauthorized" replace />;
-  return <Outlet />;
+// components/auth/AuthHydrator.tsx
+'use client';
+import { useEffect } from 'react';
+import { useAuthStore } from '@/store/authStore';
+import { authApi } from '@/lib/api/auth';
+
+export function AuthHydrator({ children }: { children: React.ReactNode }) {
+  const { refreshToken, user, login, logout } = useAuthStore();
+
+  useEffect(() => {
+    if (refreshToken && !useAuthStore.getState().accessToken) {
+      authApi.refresh(refreshToken).then(login).catch(logout);
+    }
+  }, []);
+
+  return <>{children}</>;
 }
 ```
+
+Mount `<AuthHydrator>` inside the root `app/layout.tsx`.
 
 ---
 
@@ -244,20 +422,24 @@ function ProtectedRoute({ allowedRoles }: { allowedRoles: string[] }) {
 - Each card: image, name, weight, price (KES), "Order Now" CTA
 - "Order Now" redirects to `/login` if unauthenticated, or `/portal/products` if BUYER
 
-#### Certificate Verification Page `/verify/:token`
+#### Certificate Verification Page `/verify/[token]`
 See [Section 15](#15-qr-code-verification-page) for full specification.
 
+This page is a **Server Component** — fetch the certificate data server-side so the result is immediately rendered (fast for mobile QR scans, good for SEO).
+
 #### Login Page `/login`
+- Mark the form component `'use client'` — it uses state and event handlers
 - Single form for all web users (buyers, staff, admin)
-- Email + password
-- Backend routes: buyers → `POST /api/v1/auth/buyer/login`, staff/admin → `POST /api/v1/auth/staff/login`
-- Detect role by attempting staff login first; on failure try buyer login, or present a role selector toggle
-- **Recommended approach:** Show a toggle "I am staff / I am a buyer" to call the correct endpoint
+- Email + password with a role toggle: "I am a buyer / I am staff"
+- Buyers → `POST /api/v1/auth/buyer/login`, staff/admin → `POST /api/v1/auth/staff/login`
+- On success: set role cookie, update Zustand, call `router.push(ROLE_REDIRECT[role])`
+- Use `useRouter` from `next/navigation` (not `react-router-dom`)
 
 #### Buyer Registration Page `/register`
+- `'use client'` component
 - `POST /api/v1/auth/buyer/register`
 - Fields: email, password, phone, buyer type (dropdown), display name, contact person (optional), address (optional), ward (dropdown)
-- On success: store tokens and redirect to `/portal/home`
+- On success: set role cookie, update Zustand, `router.push('/portal/home')`
 
 ---
 
@@ -390,12 +572,29 @@ All pages under `/admin` require role `ADMIN`.
 
 ## 8. API Integration Patterns
 
-### API Module Pattern
+### Server Component Fetching (public data)
 
-Each domain has its own file in `src/api/`:
+For public pages that don't need auth, use `fetch` directly in a Server Component — no Axios, no client bundle overhead:
 
 ```ts
-// api/orders.ts
+// app/products/page.tsx  (Server Component — no 'use client')
+export default async function ProductsPage() {
+  const res = await fetch(`${process.env.API_BASE_URL}/products`, {
+    next: { revalidate: 60 }, // ISR: revalidate every 60 s
+  });
+  const products: ProductResponse[] = await res.json();
+  return <ProductGrid products={products} />;
+}
+```
+
+Note: `API_BASE_URL` (no `NEXT_PUBLIC_` prefix) is server-only. Use it in Server Components and Route Handlers. Use `NEXT_PUBLIC_API_BASE_URL` in Client Components.
+
+### API Module Pattern (Client Components)
+
+Each domain has its own file in `lib/api/`:
+
+```ts
+// lib/api/orders.ts
 import { apiClient } from './client';
 import type { OrderResponse, PlaceOrderRequest } from '@/types';
 
@@ -416,8 +615,11 @@ export const ordersApi = {
 
 ### TanStack Query Hooks
 
+All hooks must be used inside `'use client'` components. TanStack Query does not work in Server Components.
+
 ```ts
 // hooks/useOrders.ts
+'use client';
 export function useMyOrders(page = 0) {
   return useQuery({
     queryKey: ['buyer', 'orders', page],
@@ -455,30 +657,49 @@ export const unwrap = <T>(res: ApiResponse<T>): T => res.data;
 
 ### Auth State (Zustand)
 
-```ts
-// store/authStore.ts
-const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      accessToken: null,
-      refreshToken: null,
-      user: null,
-      login: (tokens) => set({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        user: tokens.user,
-      }),
-      logout: () => set({ accessToken: null, refreshToken: null, user: null }),
-    }),
-    {
-      name: 'zao-auth',
-      partialize: (state) => ({ refreshToken: state.refreshToken, user: state.user }),
-    }
-  )
-);
+The Zustand auth store is defined in Section 6. Key points for Next.js:
+
+- Add `'use client'` at the top of any file that imports `useAuthStore`.
+- The store uses `zustand/middleware`'s `persist` with `localStorage`, which is only available in the browser. Zustand handles this safely — it skips persistence during SSR.
+- **Never import the auth store in a Server Component.** Server Components cannot access browser APIs.
+- Wrap the root layout with a `QueryClientProvider` and `AuthHydrator` inside a `'use client'` providers component:
+
+```tsx
+// components/Providers.tsx
+'use client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
+import { AuthHydrator } from '@/components/auth/AuthHydrator';
+import { Toaster } from 'sonner';
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient());
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthHydrator>
+        {children}
+        <Toaster richColors />
+      </AuthHydrator>
+    </QueryClientProvider>
+  );
+}
 ```
 
-Only persist the refresh token and user summary. Fetch a fresh access token on app init by calling `POST /api/v1/auth/refresh` with the stored refresh token.
+```tsx
+// app/layout.tsx
+import { Providers } from '@/components/Providers';
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+Only persist the refresh token and user summary. Fetch a fresh access token on app init via `AuthHydrator` (Section 6).
 
 ### Server State (TanStack Query)
 
@@ -640,13 +861,16 @@ Use consistent feedback after mutations:
 
 ### Empty States
 
-Show a friendly empty-state component when lists are empty:
+Show a friendly empty-state component when lists are empty. Use `useRouter` from `next/navigation` for navigation:
 ```tsx
+'use client';
+import { useRouter } from 'next/navigation';
+
 <EmptyState
   icon={<Package />}
   title="No orders yet"
   description="Browse products and place your first order."
-  action={<Button onClick={() => navigate('/portal/products')}>Browse Products</Button>}
+  action={<Button onClick={() => router.push('/portal/products')}>Browse Products</Button>}
 />
 ```
 
@@ -702,14 +926,27 @@ Rider pickup photos are uploaded by the mobile rider app, not the web frontend. 
 
 ## 15. QR Code Verification Page
 
-URL: `/verify/:token`
+URL: `/verify/[token]` → `app/verify/[token]/page.tsx`
 
-This is a **public** page accessed when a buyer scans a QR code on a produce container. It must work without login.
+This is a **public Server Component** — no login required. Fetch server-side so the result is fully rendered for mobile browsers and scanners.
 
 **Flow:**
-1. Extract `token` from URL params.
-2. Call `GET /api/v1/certificates/verify/:token`.
-3. Display the result with clear trust signals.
+1. Next.js passes the token via `params.token`.
+2. Server Component calls `GET /api/v1/certificates/verify/:token` using `fetch`.
+3. Page is fully rendered server-side — no loading spinner, instant display.
+
+```tsx
+// app/verify/[token]/page.tsx
+export default async function VerifyPage({ params }: { params: { token: string } }) {
+  const res = await fetch(
+    `${process.env.API_BASE_URL}/certificates/verify/${params.token}`,
+    { cache: 'no-store' } // always fresh — each scan increments verifiedCount
+  );
+  if (!res.ok) return <NotFoundState />;
+  const cert: PublicCertificateResponse = await res.json();
+  return <CertificateDisplay cert={cert} />;
+}
+```
 
 **Layout:**
 ```
@@ -746,48 +983,75 @@ This is a **public** page accessed when a buyer scans a QR code on a produce con
 ## 16. Security Considerations
 
 - **Never** expose the JWT secret or backend credentials in frontend code.
-- Use environment variables for the API base URL (e.g., `VITE_API_BASE_URL`).
-- Set `withCredentials: true` on Axios only if using cookies for refresh tokens.
-- Sanitise any user-generated content before rendering to prevent XSS. Avoid `dangerouslySetInnerHTML`.
-- The `Authorization` header is cleared on logout — invalidate all queries via `queryClient.clear()` as well.
-- Role checks on the frontend are for UX only. The backend enforces all authorisation server-side.
-- Do not expose admin routes in navigation to non-admin users (even if they try to navigate directly, the backend will reject the API call with 403).
+- Variables prefixed `NEXT_PUBLIC_` are embedded in the client bundle — only use this prefix for values safe to expose (e.g., API base URL). Keep server secrets (database URLs, internal keys) as plain `process.env.X` used only in Server Components.
+- The Axios client and Zustand store are browser-only — never import them in Server Components or Route Handlers.
+- Sanitise any user-generated content before rendering. Avoid `dangerouslySetInnerHTML`. Next.js JSX escapes strings by default.
+- On logout: call `POST /auth/logout`, clear Zustand (`logout()`), clear the role cookie, call `queryClient.clear()`, then `router.push('/login')`.
+- The Next.js Middleware role check is a UX guard. The Spring Boot backend enforces all real authorisation via `@PreAuthorize` — a determined user who bypasses the middleware will still get a 403 from every API call.
+- Use `next/headers` `cookies()` in Server Components/Route Handlers if you later move to httpOnly cookies for the refresh token.
 
 ---
 
 ## 17. Environment Configuration
 
-Create `.env.local` (never commit to git):
+Create `.env.local` at the project root (never commit to git):
 
 ```bash
-VITE_API_BASE_URL=http://localhost:8080/api/v1
-VITE_APP_NAME=ZaoCycle
+# Server-only (Server Components, Route Handlers, middleware)
+API_BASE_URL=http://localhost:8080/api/v1
+
+# Exposed to the browser (Client Components, Axios)
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
+
+NEXT_PUBLIC_APP_NAME=ZaoCycle
 ```
 
-Production:
+Production (`.env.production.local` or set in deployment platform):
 ```bash
-VITE_API_BASE_URL=https://api.zaocycle.app/api/v1
+API_BASE_URL=https://api.zaocycle.app/api/v1
+NEXT_PUBLIC_API_BASE_URL=https://api.zaocycle.app/api/v1
 ```
 
-The Axios client reads this:
+**Usage by context:**
+
+| Context | Variable | Access |
+|---|---|---|
+| Server Component / Route Handler | `API_BASE_URL` | `process.env.API_BASE_URL` |
+| Client Component / Axios | `NEXT_PUBLIC_API_BASE_URL` | `process.env.NEXT_PUBLIC_API_BASE_URL` |
+
+You can also configure the backend origin in `next.config.ts` for rewrites (proxying in dev):
+
 ```ts
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 15000,
-});
+// next.config.ts
+const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${process.env.API_BASE_URL}/:path*`,
+      },
+    ];
+  },
+};
+export default nextConfig;
 ```
+
+With this rewrite, the Axios `baseURL` can simply be `/api/v1` — no cross-origin issue in development.
 
 ---
 
 ## 18. Development Workflow
 
 ### Phase 1 — Foundations
-- [ ] Scaffold project (Vite + React + TypeScript + Tailwind)
-- [ ] Set up routing with role-based layouts
-- [ ] Implement Axios client with token interceptors
-- [ ] Build auth store (Zustand) and login/register pages
-- [ ] Add ProtectedRoute and RoleGuard components
+- [ ] Scaffold project: `npx create-next-app@latest zaocycle-web --typescript --tailwind --app --src-dir no --import-alias "@/*"`
+- [ ] Install dependencies: `shadcn/ui`, `@tanstack/react-query`, `axios`, `zustand`, `react-hook-form`, `zod`, `@hookform/resolvers`, `date-fns`, `lucide-react`, `sonner`, `qrcode.react`
+- [ ] Configure `next.config.ts` with API rewrite proxy
+- [ ] Set up App Router route groups `(portal)`, `(dashboard)`, `(admin)` with layout files
+- [ ] Implement `middleware.ts` for role-based route protection
+- [ ] Build Zustand auth store and `Providers` wrapper
+- [ ] Build `AuthHydrator` for silent token refresh on page load
+- [ ] Implement Axios client with interceptors
+- [ ] Build login and register pages (`'use client'` components)
 
 ### Phase 2 — Public & Buyer
 - [ ] Landing page
