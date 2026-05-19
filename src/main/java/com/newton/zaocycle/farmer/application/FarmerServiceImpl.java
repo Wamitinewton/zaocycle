@@ -59,4 +59,13 @@ class FarmerServiceImpl implements FarmerService {
         return new FarmerSummary(farmer.id(), farmer.phone().value(),
                 farmer.fullName(), farmer.isRegistrationComplete());
     }
+
+    @Override
+    @Transactional
+    public Farmer updateProfileImage(UUID id, String imageUrl) {
+        Farmer farmer = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Farmer not found: " + id));
+        farmer.updateProfileImage(imageUrl);
+        return repository.save(farmer);
+    }
 }

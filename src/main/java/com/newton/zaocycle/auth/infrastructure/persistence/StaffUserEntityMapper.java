@@ -8,7 +8,7 @@ final class StaffUserEntityMapper {
     private StaffUserEntityMapper() {}
 
     static StaffUser toDomain(StaffUserEntity e) {
-        return new StaffUser(
+        StaffUser user = new StaffUser(
                 e.getId(),
                 e.getEmail(),
                 e.getPasswordHash(),
@@ -18,6 +18,10 @@ final class StaffUserEntityMapper {
                 e.getCreatedAt(),
                 e.getUpdatedAt()
         );
+        if (e.getProfileImageUrl() != null) {
+            user.updateProfileImage(e.getProfileImageUrl());
+        }
+        return user;
     }
 
     static StaffUserEntity toEntity(StaffUser user) {
@@ -28,6 +32,7 @@ final class StaffUserEntityMapper {
         e.setFullName(user.fullName());
         e.setRole(user.role().name());
         e.setActive(user.isActive());
+        e.setProfileImageUrl(user.profileImageUrl());
         return e;
     }
 }

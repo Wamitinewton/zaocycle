@@ -14,6 +14,7 @@ public final class StaffUser {
     private final String fullName;
     private final Role role;
     private boolean active;
+    private String profileImageUrl;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -40,12 +41,28 @@ public final class StaffUser {
         }
     }
 
-    public UUID id()             { return id; }
-    public String email()        { return email; }
-    public String passwordHash() { return passwordHash; }
-    public String fullName()     { return fullName; }
-    public Role role()           { return role; }
-    public boolean isActive()    { return active; }
-    public Instant createdAt()   { return createdAt; }
-    public Instant updatedAt()   { return updatedAt; }
+    public void deactivate() {
+        this.active = false;
+        this.updatedAt = Instant.now();
+    }
+
+    public void reactivate() {
+        this.active = true;
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateProfileImage(String url) {
+        this.profileImageUrl = url;
+        this.updatedAt = Instant.now();
+    }
+
+    public UUID id()                  { return id; }
+    public String email()             { return email; }
+    public String passwordHash()      { return passwordHash; }
+    public String fullName()          { return fullName; }
+    public Role role()                { return role; }
+    public boolean isActive()         { return active; }
+    public String profileImageUrl()   { return profileImageUrl; }
+    public Instant createdAt()        { return createdAt; }
+    public Instant updatedAt()        { return updatedAt; }
 }

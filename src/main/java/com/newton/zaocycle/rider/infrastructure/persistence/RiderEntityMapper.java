@@ -9,7 +9,7 @@ final class RiderEntityMapper {
     private RiderEntityMapper() {}
 
     static Rider toDomain(RiderEntity e) {
-        return new Rider(
+        Rider rider = new Rider(
                 e.getId(),
                 PhoneNumber.of(e.getPhone()),
                 e.getFullName(),
@@ -19,6 +19,10 @@ final class RiderEntityMapper {
                 e.getCreatedAt(),
                 e.getUpdatedAt()
         );
+        if (e.getProfileImageUrl() != null) {
+            rider.updateProfileImage(e.getProfileImageUrl());
+        }
+        return rider;
     }
 
     static RiderEntity toEntity(Rider rider) {
@@ -29,6 +33,7 @@ final class RiderEntityMapper {
         e.setPasswordHash(rider.passwordHash());
         e.setAssignedWard(rider.assignedWard().name());
         e.setActive(rider.isActive());
+        e.setProfileImageUrl(rider.profileImageUrl());
         return e;
     }
 }

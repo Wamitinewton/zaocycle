@@ -15,4 +15,5 @@ public interface RiderService {
     Optional<Rider> findByPhone(PhoneNumber phone);
     List<Rider> findActiveInWard(Ward ward);
     Rider deactivate(UUID id);
+    Rider updateProfileImage(UUID id, String imageUrl);
 }

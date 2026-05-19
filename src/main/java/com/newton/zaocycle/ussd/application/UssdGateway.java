@@ -3,10 +3,14 @@ package com.newton.zaocycle.ussd.application;
 import com.newton.zaocycle.ussd.api.dto.UssdCallbackRequest;
 import com.newton.zaocycle.ussd.application.response.MenuResponse;
 import com.newton.zaocycle.ussd.domain.model.UssdSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UssdGateway {
+
+    private static final Logger log = LoggerFactory.getLogger(UssdGateway.class);
 
     private final UssdSessionService sessionService;
     private final MenuDispatcher dispatcher;
@@ -27,9 +31,14 @@ public class UssdGateway {
 
         try {
             String lastInput = extractLastInput(request.getText());
+            log.info("USSD request sessionId={} phone={} serviceCode={} input=[{}]",
+                    request.getSessionId(), request.getPhoneNumber(),
+                    request.getServiceCode(), lastInput);
+
             UssdSession session = sessionService.loadOrCreate(
                     request.getSessionId(), request.getPhoneNumber());
 
+            log.debug("Dispatching state={} input=[{}]", session.getState(), lastInput);
             MenuResponse response = dispatcher.dispatch(session, lastInput);
             sessionService.save(session);
 
@@ -37,9 +46,14 @@ public class UssdGateway {
             responseType = formatted.startsWith("CON") ? "CON" : "END";
             responseText = formatted.substring(4);
 
+            log.info("USSD response sessionId={} type={} durationMs={}",
+                    request.getSessionId(), responseType, System.currentTimeMillis() - start);
             return formatted;
 
         } catch (Exception e) {
+            log.error("USSD error sessionId={} phone={} state=[{}] input=[{}]",
+                    request.getSessionId(), request.getPhoneNumber(),
+                    request.getText(), e.getMessage(), e);
             errorMessage = e.getMessage();
             responseType = "ERROR";
             return "END An error occurred. Please try again.";

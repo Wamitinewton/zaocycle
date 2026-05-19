@@ -17,6 +17,7 @@ public final class Buyer {
     private String address;
     private String ward;
     private boolean active;
+    private String profileImageUrl;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -54,16 +55,22 @@ public final class Buyer {
         this.updatedAt = Instant.now();
     }
 
-    public UUID id()              { return id; }
-    public String email()         { return email; }
-    public String passwordHash()  { return passwordHash; }
-    public String phone()         { return phone; }
-    public BuyerType buyerType()  { return buyerType; }
-    public String displayName()   { return displayName; }
-    public String contactPerson() { return contactPerson; }
-    public String address()       { return address; }
-    public String ward()          { return ward; }
-    public boolean isActive()     { return active; }
-    public Instant createdAt()    { return createdAt; }
-    public Instant updatedAt()    { return updatedAt; }
+    public void updateProfileImage(String url) {
+        this.profileImageUrl = url;
+        this.updatedAt = Instant.now();
+    }
+
+    public UUID id()                  { return id; }
+    public String email()             { return email; }
+    public String passwordHash()      { return passwordHash; }
+    public String phone()             { return phone; }
+    public BuyerType buyerType()      { return buyerType; }
+    public String displayName()       { return displayName; }
+    public String contactPerson()     { return contactPerson; }
+    public String address()           { return address; }
+    public String ward()              { return ward; }
+    public boolean isActive()         { return active; }
+    public String profileImageUrl()   { return profileImageUrl; }
+    public Instant createdAt()        { return createdAt; }
+    public Instant updatedAt()        { return updatedAt; }
 }

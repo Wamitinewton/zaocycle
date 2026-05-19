@@ -15,6 +15,7 @@ public final class Farmer {
     private Ward ward;
     private String pinHash;
     private boolean registrationComplete;
+    private String profileImageUrl;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -46,12 +47,18 @@ public final class Farmer {
         this.updatedAt = Instant.now();
     }
 
+    public void updateProfileImage(String url) {
+        this.profileImageUrl = url;
+        this.updatedAt = Instant.now();
+    }
+
     public UUID id()                        { return id; }
     public PhoneNumber phone()              { return phone; }
     public String fullName()                { return fullName; }
     public Ward ward()                      { return ward; }
     public String pinHash()                 { return pinHash; }
     public boolean isRegistrationComplete() { return registrationComplete; }
+    public String profileImageUrl()         { return profileImageUrl; }
     public Instant createdAt()              { return createdAt; }
     public Instant updatedAt()              { return updatedAt; }
 }

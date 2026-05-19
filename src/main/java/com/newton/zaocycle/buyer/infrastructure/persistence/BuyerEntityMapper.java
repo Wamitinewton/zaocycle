@@ -8,7 +8,7 @@ final class BuyerEntityMapper {
     private BuyerEntityMapper() {}
 
     static Buyer toDomain(BuyerEntity e) {
-        return new Buyer(
+        Buyer buyer = new Buyer(
                 e.getId(),
                 e.getEmail(),
                 e.getPasswordHash(),
@@ -22,6 +22,10 @@ final class BuyerEntityMapper {
                 e.getCreatedAt(),
                 e.getUpdatedAt()
         );
+        if (e.getProfileImageUrl() != null) {
+            buyer.updateProfileImage(e.getProfileImageUrl());
+        }
+        return buyer;
     }
 
     static BuyerEntity toEntity(Buyer buyer) {
@@ -36,6 +40,7 @@ final class BuyerEntityMapper {
         e.setAddress(buyer.address());
         e.setWard(buyer.ward());
         e.setActive(buyer.isActive());
+        e.setProfileImageUrl(buyer.profileImageUrl());
         return e;
     }
 }

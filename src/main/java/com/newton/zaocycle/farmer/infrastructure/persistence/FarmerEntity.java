@@ -32,4 +32,7 @@ class FarmerEntity extends AuditableEntity {
 
     @Column(name = "registration_complete", nullable = false)
     private boolean registrationComplete;
+
+    @Column(name = "profile_image_url", columnDefinition = "TEXT")
+    private String profileImageUrl;
 }

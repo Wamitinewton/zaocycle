@@ -12,4 +12,5 @@ public interface BuyerService {
     Optional<Buyer> findById(UUID id);
     Optional<Buyer> findByEmail(String email);
     Buyer updateProfile(UUID id, UpdateBuyerCommand cmd);
+    Buyer updateProfileImage(UUID id, String imageUrl);
 }

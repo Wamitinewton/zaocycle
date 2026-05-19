@@ -54,7 +54,7 @@ africastalking:
   username: ${AT_USERNAME:sandbox}
   sender-id: ${AT_SENDER_ID:ZAOCYCLE}
   base-url: ${AT_BASE_URL:https://api.sandbox.africastalking.com}
-  service-code: ${AT_SERVICE_CODE:*384*1659#}
+  service-code: ${AT_SERVICE_CODE:*384*5193#}
 
 jwt:
   secret: ${JWT_SECRET}

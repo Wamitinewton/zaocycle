@@ -15,6 +15,7 @@ public final class Rider {
     private String passwordHash;
     private final Ward assignedWard;
     private boolean active;
+    private String profileImageUrl;
     private final Instant createdAt;
     private Instant updatedAt;
 
@@ -45,12 +46,18 @@ public final class Rider {
         this.updatedAt = Instant.now();
     }
 
+    public void updateProfileImage(String url) {
+        this.profileImageUrl = url;
+        this.updatedAt = Instant.now();
+    }
+
     public UUID id()              { return id; }
     public PhoneNumber phone()    { return phone; }
     public String fullName()      { return fullName; }
     public String passwordHash()  { return passwordHash; }
     public Ward assignedWard()    { return assignedWard; }
     public boolean isActive()     { return active; }
+    public String profileImageUrl() { return profileImageUrl; }
     public Instant createdAt()    { return createdAt; }
     public Instant updatedAt()    { return updatedAt; }
 }

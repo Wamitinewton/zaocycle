@@ -57,4 +57,13 @@ class BuyerServiceImpl implements BuyerService {
         buyer.updateProfile(cmd.displayName(), cmd.contactPerson(), cmd.address(), cmd.ward());
         return repository.save(buyer);
     }
+
+    @Override
+    @Transactional
+    public Buyer updateProfileImage(UUID id, String imageUrl) {
+        Buyer buyer = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Buyer not found: " + id));
+        buyer.updateProfileImage(imageUrl);
+        return repository.save(buyer);
+    }
 }

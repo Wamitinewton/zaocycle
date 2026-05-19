@@ -60,4 +60,13 @@ class RiderServiceImpl implements RiderService {
         rider.deactivate();
         return repository.save(rider);
     }
+
+    @Override
+    @Transactional
+    public Rider updateProfileImage(UUID id, String imageUrl) {
+        Rider rider = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Rider not found: " + id));
+        rider.updateProfileImage(imageUrl);
+        return repository.save(rider);
+    }
 }

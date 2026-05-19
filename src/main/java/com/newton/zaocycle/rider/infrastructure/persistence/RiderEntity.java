@@ -32,4 +32,7 @@ class RiderEntity extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean active;
+
+    @Column(name = "profile_image_url", columnDefinition = "TEXT")
+    private String profileImageUrl;
 }

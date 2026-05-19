@@ -14,4 +14,5 @@ public interface FarmerService {
     Farmer findOrCreateByPhone(PhoneNumber phone);
     Farmer register(RegisterFarmerCommand command);
     FarmerSummary getSummary(PhoneNumber phone);
+    Farmer updateProfileImage(UUID id, String imageUrl);
 }

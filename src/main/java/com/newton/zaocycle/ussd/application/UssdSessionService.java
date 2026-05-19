@@ -1,30 +1,30 @@
 package com.newton.zaocycle.ussd.application;
 
-import com.newton.zaocycle.farmer.application.FarmerService;
-import com.newton.zaocycle.farmer.domain.model.Farmer;
-import com.newton.zaocycle.shared.domain.PhoneNumber;
 import com.newton.zaocycle.ussd.domain.model.MenuState;
 import com.newton.zaocycle.ussd.domain.model.UssdSession;
 import com.newton.zaocycle.ussd.domain.port.UssdSessionStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UssdSessionService {
 
-    private final UssdSessionStore store;
-    private final FarmerService farmerService;
+    private static final Logger log = LoggerFactory.getLogger(UssdSessionService.class);
 
-    public UssdSessionService(UssdSessionStore store, FarmerService farmerService) {
+    private final UssdSessionStore store;
+
+    public UssdSessionService(UssdSessionStore store) {
         this.store = store;
-        this.farmerService = farmerService;
     }
 
     public UssdSession loadOrCreate(String sessionId, String phoneNumber) {
-        return store.find(sessionId).orElseGet(() -> {
-            Farmer farmer = farmerService.findOrCreateByPhone(PhoneNumber.of(phoneNumber));
-            MenuState initialState = farmer.isRegistrationComplete()
-                    ? MenuState.MAIN_MENU : MenuState.WELCOME;
-            return UssdSession.start(sessionId, phoneNumber, initialState);
+        return store.find(sessionId).map(s -> {
+            log.debug("Resumed session sessionId={} phone={} state={}", sessionId, phoneNumber, s.getState());
+            return s;
+        }).orElseGet(() -> {
+            log.info("New USSD session sessionId={} phone={}", sessionId, phoneNumber);
+            return UssdSession.start(sessionId, phoneNumber, MenuState.WELCOME);
         });
     }
 
