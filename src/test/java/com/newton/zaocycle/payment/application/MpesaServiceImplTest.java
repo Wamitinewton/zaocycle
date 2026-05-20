@@ -42,7 +42,7 @@ class MpesaServiceImplTest {
     void setUp() {
         props = new DarajaProperties(
                 "https://sandbox.safaricom.co.ke", "key", "secret",
-                "600000", "testapi", "credential",
+                "600000", "174379", "testapi", "credential",
                 "https://example.com/b2c/result",
                 "https://example.com/b2c/timeout",
                 "passkey",

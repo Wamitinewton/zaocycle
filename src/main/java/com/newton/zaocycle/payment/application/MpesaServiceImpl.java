@@ -87,7 +87,7 @@ class MpesaServiceImpl implements MpesaService {
     @Transactional
     public MpesaTransaction initiateStkPush(UUID orderId, String phone, BigDecimal amount, String reference) {
         String timestamp = ZonedDateTime.now(NAIROBI).format(TIMESTAMP_FMT);
-        String rawPassword = props.shortcode() + props.stkPasskey() + timestamp;
+        String rawPassword = props.stkShortcode() + props.stkPasskey() + timestamp;
         String password = Base64.getEncoder().encodeToString(
                 rawPassword.getBytes(StandardCharsets.UTF_8));
 
@@ -99,9 +99,9 @@ class MpesaServiceImpl implements MpesaService {
 
         try {
             StkPushRequest request = new StkPushRequest(
-                    props.shortcode(), password, timestamp,
+                    props.stkShortcode(), password, timestamp,
                     "CustomerPayBillOnline", amount,
-                    phone, props.shortcode(), phone,
+                    phone, props.stkShortcode(), phone,
                     props.stkCallbackUrl(), reference,
                     "ZaoCycle Order Payment");
             var response = darajaClient.stkPush(request);

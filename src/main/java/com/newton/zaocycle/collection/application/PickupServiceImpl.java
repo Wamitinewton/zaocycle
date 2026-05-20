@@ -69,7 +69,7 @@ class PickupServiceImpl implements PickupService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public WastePickup autoAssign(UUID pickupId) {
         WastePickup pickup = loadOrThrow(pickupId);
         Farmer farmer = farmerService.findById(pickup.farmerId())
@@ -151,6 +151,7 @@ class PickupServiceImpl implements PickupService {
                 farmer != null ? farmer.phone().value() : null,
                 rider != null ? rider.phone().value() : null,
                 farmer != null ? farmer.fullName() : null,
+                rider != null ? rider.fullName() : null,
                 farmer != null && farmer.ward() != null ? farmer.ward().displayName() : null
         ));
     }

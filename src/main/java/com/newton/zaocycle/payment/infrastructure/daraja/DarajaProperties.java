@@ -7,7 +7,8 @@ public record DarajaProperties(
         String baseUrl,
         String consumerKey,
         String consumerSecret,
-        String shortcode,
+        String shortcode,      // B2C paybill (sandbox: 600000)
+        String stkShortcode,   // STK Push paybill (sandbox: 174379)
         String initiatorName,
         String securityCredential,
         String b2cResultUrl,

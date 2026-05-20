@@ -18,10 +18,16 @@ public class PickupScheduledListener {
 
     @TransactionalEventListener
     public void on(PickupScheduled event) {
-        notifications.sendTemplated(event.farmerPhone(), "PICKUP_SCHEDULED_FARMER",
-                Map.of("date", event.scheduledDate().toString()));
-        notifications.sendTemplated(event.riderPhone(), "PICKUP_ASSIGNED_RIDER",
-                Map.of("farmerName", event.farmerName(), "ward", event.ward(),
-                        "date", event.scheduledDate().toString()));
+        if (event.farmerPhone() != null) {
+            notifications.sendTemplated(event.farmerPhone(), "PICKUP_SCHEDULED_FARMER",
+                    Map.of("date", event.scheduledDate().toString(),
+                            "riderName", event.riderName() != null ? event.riderName() : "a rider"));
+        }
+        if (event.riderPhone() != null) {
+            notifications.sendTemplated(event.riderPhone(), "PICKUP_ASSIGNED_RIDER",
+                    Map.of("farmerName", event.farmerName() != null ? event.farmerName() : "Farmer",
+                            "ward", event.ward() != null ? event.ward() : "",
+                            "date", event.scheduledDate().toString()));
+        }
     }
 }
