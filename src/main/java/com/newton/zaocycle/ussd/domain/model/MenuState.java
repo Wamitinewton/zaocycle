@@ -4,6 +4,7 @@ public enum MenuState {
     WELCOME,
     REGISTER_NAME,
     REGISTER_WARD,
+    REGISTER_VILLAGE,
     REGISTER_PIN,
     MAIN_MENU,
     LOG_SPRAY_CROP,

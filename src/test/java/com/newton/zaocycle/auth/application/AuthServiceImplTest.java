@@ -56,7 +56,7 @@ class AuthServiceImplTest {
     void loginUnified_farmerPhone_validPin_returnsToken() {
         UUID id = UUID.randomUUID();
         PhoneNumber phone = PhoneNumber.of("+254700000001");
-        Farmer farmer = new Farmer(id, phone, "John Doe", Ward.MWEA, "hashed-pin", true, Instant.now(), Instant.now());
+        Farmer farmer = new Farmer(id, phone, "John Doe", Ward.MWEA, "hashed-pin", true, null, null, null, null, Instant.now(), Instant.now());
 
         when(farmerService.findByPhone(phone)).thenReturn(Optional.of(farmer));
         when(passwordEncoder.matches("1234", "hashed-pin")).thenReturn(true);
@@ -84,7 +84,7 @@ class AuthServiceImplTest {
     void loginUnified_incompleteRegistration_throwsBadCredentials() {
         UUID id = UUID.randomUUID();
         PhoneNumber phone = PhoneNumber.of("+254700000003");
-        Farmer farmer = new Farmer(id, phone, null, null, null, false, Instant.now(), Instant.now());
+        Farmer farmer = new Farmer(id, phone, null, null, null, false, null, null, null, null, Instant.now(), Instant.now());
 
         when(farmerService.findByPhone(phone)).thenReturn(Optional.of(farmer));
 
@@ -96,7 +96,7 @@ class AuthServiceImplTest {
     void loginUnified_wrongPin_throwsBadCredentials() {
         UUID id = UUID.randomUUID();
         PhoneNumber phone = PhoneNumber.of("+254700000004");
-        Farmer farmer = new Farmer(id, phone, "Jane Doe", Ward.NDIA, "hashed-pin", true, Instant.now(), Instant.now());
+        Farmer farmer = new Farmer(id, phone, "Jane Doe", Ward.NDIA, "hashed-pin", true, null, null, null, null, Instant.now(), Instant.now());
 
         when(farmerService.findByPhone(phone)).thenReturn(Optional.of(farmer));
         when(passwordEncoder.matches("wrong", "hashed-pin")).thenReturn(false);

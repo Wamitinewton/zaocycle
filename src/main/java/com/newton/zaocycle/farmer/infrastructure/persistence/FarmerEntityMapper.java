@@ -10,20 +10,20 @@ final class FarmerEntityMapper {
 
     static Farmer toDomain(FarmerEntity e) {
         Ward ward = (e.getWard() != null) ? Ward.valueOf(e.getWard()) : null;
-        Farmer farmer = new Farmer(
+        return new Farmer(
                 e.getId(),
                 PhoneNumber.of(e.getPhone()),
                 e.getFullName(),
                 ward,
                 e.getPinHash(),
                 e.isRegistrationComplete(),
+                e.getTradingCenter(),
+                e.getLatitude(),
+                e.getLongitude(),
+                e.getProfileImageUrl(),
                 e.getCreatedAt(),
                 e.getUpdatedAt()
         );
-        if (e.getProfileImageUrl() != null) {
-            farmer.updateProfileImage(e.getProfileImageUrl());
-        }
-        return farmer;
     }
 
     static FarmerEntity toEntity(Farmer farmer) {
@@ -34,6 +34,9 @@ final class FarmerEntityMapper {
         e.setWard(farmer.ward() != null ? farmer.ward().name() : null);
         e.setPinHash(farmer.pinHash());
         e.setRegistrationComplete(farmer.isRegistrationComplete());
+        e.setTradingCenter(farmer.tradingCenter());
+        e.setLatitude(farmer.latitude());
+        e.setLongitude(farmer.longitude());
         e.setProfileImageUrl(farmer.profileImageUrl());
         return e;
     }

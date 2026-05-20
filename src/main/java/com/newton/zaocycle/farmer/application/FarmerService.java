@@ -1,6 +1,7 @@
 package com.newton.zaocycle.farmer.application;
 
 import com.newton.zaocycle.farmer.application.command.RegisterFarmerCommand;
+import com.newton.zaocycle.farmer.application.command.UpdateFarmerLocationCommand;
 import com.newton.zaocycle.farmer.application.dto.FarmerSummary;
 import com.newton.zaocycle.farmer.domain.model.Farmer;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
@@ -15,4 +16,5 @@ public interface FarmerService {
     Farmer register(RegisterFarmerCommand command);
     FarmerSummary getSummary(PhoneNumber phone);
     Farmer updateProfileImage(UUID id, String imageUrl);
+    Farmer updateLocation(UpdateFarmerLocationCommand command);
 }

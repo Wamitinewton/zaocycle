@@ -1,6 +1,7 @@
 package com.newton.zaocycle.farmer.application;
 
 import com.newton.zaocycle.farmer.application.command.RegisterFarmerCommand;
+import com.newton.zaocycle.farmer.application.command.UpdateFarmerLocationCommand;
 import com.newton.zaocycle.farmer.application.dto.FarmerSummary;
 import com.newton.zaocycle.farmer.domain.model.Farmer;
 import com.newton.zaocycle.farmer.domain.port.FarmerRepository;
@@ -47,7 +48,14 @@ class FarmerServiceImpl implements FarmerService {
     public Farmer register(RegisterFarmerCommand command) {
         Farmer farmer = repository.findByPhone(command.phone())
                 .orElseThrow(() -> new NotFoundException("Farmer not found for: " + command.phone().value()));
-        farmer.completeRegistration(command.fullName(), command.ward(), passwordEncoder.encode(command.pin()));
+        farmer.completeRegistration(
+                command.fullName(),
+                command.ward(),
+                passwordEncoder.encode(command.pin()),
+                command.tradingCenter(),
+                command.latitude(),
+                command.longitude()
+        );
         return repository.save(farmer);
     }
 
@@ -61,11 +69,18 @@ class FarmerServiceImpl implements FarmerService {
     }
 
     @Override
-    @Transactional
     public Farmer updateProfileImage(UUID id, String imageUrl) {
         Farmer farmer = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Farmer not found: " + id));
         farmer.updateProfileImage(imageUrl);
+        return repository.save(farmer);
+    }
+
+    @Override
+    public Farmer updateLocation(UpdateFarmerLocationCommand command) {
+        Farmer farmer = repository.findById(command.farmerId())
+                .orElseThrow(() -> new NotFoundException("Farmer not found: " + command.farmerId()));
+        farmer.updateLocation(command.tradingCenter(), command.latitude(), command.longitude());
         return repository.save(farmer);
     }
 }

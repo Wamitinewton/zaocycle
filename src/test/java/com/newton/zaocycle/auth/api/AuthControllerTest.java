@@ -74,7 +74,7 @@ class AuthControllerTest {
 
         PhoneNumber phone = PhoneNumber.of(TEST_PHONE);
         farmerService.findOrCreateByPhone(phone);
-        farmerService.register(new RegisterFarmerCommand(phone, "Test Farmer", Ward.MWEA, TEST_PIN));
+        farmerService.register(new RegisterFarmerCommand(phone, "Test Farmer", Ward.MWEA, TEST_PIN, null, null, null));
     }
 
     @Test

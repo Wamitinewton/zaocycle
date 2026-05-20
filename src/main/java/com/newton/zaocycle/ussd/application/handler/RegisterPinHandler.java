@@ -35,8 +35,8 @@ public class RegisterPinHandler implements MenuHandler {
             return ResponseBuilder.cont("PIN must be exactly 4 digits.\nSet a 4-digit PIN:");
         }
 
-        String fullName = session.getString("fullName");
-        String wardName = session.getString("ward");
+        String fullName    = session.getString("fullName");
+        String wardName    = session.getString("ward");
 
         if (fullName == null || wardName == null) {
             log.warn("Registration session missing data for phone={}", session.getPhoneNumber());
@@ -50,9 +50,20 @@ public class RegisterPinHandler implements MenuHandler {
             return ResponseBuilder.end("Session error. Please dial again.");
         }
 
+        String tradingCenter = session.getString("tradingCenter");
+        Double latitude      = parseDouble(session.getString("latitude"));
+        Double longitude     = parseDouble(session.getString("longitude"));
+
         // PIN is passed directly to FarmerService; it is hashed there and never stored in the session
         RegisterFarmerCommand command = new RegisterFarmerCommand(
-                PhoneNumber.of(session.getPhoneNumber()), fullName, ward, input.trim());
+                PhoneNumber.of(session.getPhoneNumber()),
+                fullName,
+                ward,
+                input.trim(),
+                tradingCenter,
+                latitude,
+                longitude
+        );
         try {
             Farmer farmer = farmerService.register(command);
             session.put("farmerId", farmer.id().toString());
@@ -74,5 +85,14 @@ public class RegisterPinHandler implements MenuHandler {
     private String firstName(String fullName) {
         if (fullName == null || fullName.isBlank()) return "";
         return fullName.split("\\s+")[0];
+    }
+
+    private Double parseDouble(String s) {
+        if (s == null) return null;
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

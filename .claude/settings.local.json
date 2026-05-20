@@ -4,7 +4,9 @@
       "Bash(./gradlew compileJava *)",
       "Bash(./gradlew clean *)",
       "Bash(PGPASSWORD=zaocycle psql -h localhost -U zaocycle -d zaocycle -f /home/newton/Desktop/projects/zaocyclebackend/src/main/resources/db/migration/V10__init_sms_tables.sql)",
-      "Bash(./gradlew test *)"
+      "Bash(./gradlew test *)",
+      "Bash(xargs cat)",
+      "Bash(python3 -c \"import bcrypt; h = bcrypt.hashpw\\(b'ZaoCycle123!', bcrypt.gensalt\\(12\\)\\); print\\(h.decode\\(\\)\\)\")"
     ]
   }
 }

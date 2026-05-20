@@ -60,7 +60,7 @@ class InboundSmsDispatcherTest {
     @Test
     void handle_wasteCommand_publishesWastePickupRequestedEvent() {
         Farmer farmer = new Farmer(FARMER_ID, PhoneNumber.of(PHONE), "John Doe",
-                Ward.MWEA, null, true, Instant.now(), Instant.now());
+                Ward.MWEA, null, true, null, null, null, null, Instant.now(), Instant.now());
         when(farmerService.findByPhone(PhoneNumber.of(PHONE))).thenReturn(Optional.of(farmer));
         when(pesticideService.findReadyForPickup(FARMER_ID)).thenReturn(List.of(safeApp()));
         when(inboundRepo.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -88,7 +88,7 @@ class InboundSmsDispatcherTest {
     @Test
     void handle_wasteCommand_noCertifiedCrops_sendsNotHarvestReadySms() {
         Farmer farmer = new Farmer(FARMER_ID, PhoneNumber.of(PHONE), "John Doe",
-                Ward.MWEA, null, true, Instant.now(), Instant.now());
+                Ward.MWEA, null, true, null, null, null, null, Instant.now(), Instant.now());
         when(farmerService.findByPhone(PhoneNumber.of(PHONE))).thenReturn(Optional.of(farmer));
         when(pesticideService.findReadyForPickup(FARMER_ID)).thenReturn(List.of());
         when(inboundRepo.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -111,7 +111,7 @@ class InboundSmsDispatcherTest {
     @Test
     void handle_balCommand_registeredFarmer_sendsEarningsSms() {
         Farmer farmer = new Farmer(FARMER_ID, PhoneNumber.of(PHONE), "Jane Doe",
-                Ward.MWEA, null, true, Instant.now(), Instant.now());
+                Ward.MWEA, null, true, null, null, null, null, Instant.now(), Instant.now());
         FarmerEarnings earnings = new FarmerEarnings(
                 new BigDecimal("1500.00"), new BigDecimal("300.00"), 5L, List.of());
         when(farmerService.findByPhone(PhoneNumber.of(PHONE))).thenReturn(Optional.of(farmer));
