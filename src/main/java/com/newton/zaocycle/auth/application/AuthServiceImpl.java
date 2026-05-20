@@ -11,13 +11,14 @@ import com.newton.zaocycle.farmer.application.FarmerService;
 import com.newton.zaocycle.farmer.domain.model.Farmer;
 import com.newton.zaocycle.rider.application.RiderService;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
-import com.newton.zaocycle.shared.exception.NotFoundException;
 import com.newton.zaocycle.shared.exception.ValidationException;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 class AuthServiceImpl implements AuthService {
@@ -48,61 +49,73 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional(readOnly = true)
-    public TokenResponse loginFarmer(String phone, String pin) {
-        Farmer farmer = farmerService.findByPhone(PhoneNumber.of(phone))
-                .orElseThrow(() -> new NotFoundException("Farmer not found"));
-        if (!farmer.isRegistrationComplete()) {
-            throw new ValidationException("Farmer registration is not complete");
+    public TokenResponse loginUnified(String identifier, String credential) {
+        if (looksLikePhone(identifier)) {
+            return resolvePhoneLogin(identifier, credential);
         }
-        if (!passwordEncoder.matches(pin, farmer.pinHash())) {
-            throw new BadCredentialsException("Invalid credentials");
+        if (looksLikeEmail(identifier)) {
+            return resolveEmailLogin(identifier, credential);
         }
-        AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
-                farmer.id(), Role.FARMER, farmer.fullName(), farmer.phone().value(), null);
-        return buildTokenResponse(principal);
+        throw new BadCredentialsException("Invalid credentials");
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public TokenResponse loginRider(String phone, String password) {
-        var rider = riderService.findByPhone(PhoneNumber.of(phone))
-                .orElseThrow(() -> new NotFoundException("Rider not found"));
-        if (!passwordEncoder.matches(password, rider.passwordHash())) {
-            throw new BadCredentialsException("Invalid credentials");
-        }
-        AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
-                rider.id(), Role.RIDER, rider.fullName(), rider.phone().value(), null);
-        return buildTokenResponse(principal);
+    private boolean looksLikePhone(String identifier) {
+        return identifier != null && identifier.matches("^\\+[1-9]\\d{7,14}$");
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public TokenResponse loginStaff(String email, String password) {
-        StaffUser staff = staffUserRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Staff user not found"));
-        staff.ensureActive();
-        if (!passwordEncoder.matches(password, staff.passwordHash())) {
-            throw new BadCredentialsException("Invalid credentials");
-        }
-        AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
-                staff.id(), staff.role(), staff.fullName(), null, staff.email());
-        return buildTokenResponse(principal);
+    private boolean looksLikeEmail(String identifier) {
+        return identifier != null && identifier.contains("@");
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public TokenResponse loginBuyer(String email, String password) {
+    private TokenResponse resolvePhoneLogin(String phone, String credential) {
+        PhoneNumber phoneNumber;
+        try {
+            phoneNumber = PhoneNumber.of(phone);
+        } catch (ValidationException e) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+
+        Optional<Farmer> farmerOpt = farmerService.findByPhone(phoneNumber);
+        if (farmerOpt.isPresent()) {
+            Farmer f = farmerOpt.get();
+            if (!f.isRegistrationComplete() || !passwordEncoder.matches(credential, f.pinHash())) {
+                throw new BadCredentialsException("Invalid credentials");
+            }
+            return buildTokenResponse(new AuthenticatedPrincipal(
+                    f.id(), Role.FARMER, f.fullName(), f.phone().value(), null));
+        }
+
+        var rider = riderService.findByPhone(phoneNumber)
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+        if (!passwordEncoder.matches(credential, rider.passwordHash())) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+        return buildTokenResponse(new AuthenticatedPrincipal(
+                rider.id(), Role.RIDER, rider.fullName(), rider.phone().value(), null));
+    }
+
+    private TokenResponse resolveEmailLogin(String email, String credential) {
+        Optional<StaffUser> staffOpt = staffUserRepository.findByEmail(email);
+        if (staffOpt.isPresent()) {
+            StaffUser s = staffOpt.get();
+            s.ensureActive();
+            if (!passwordEncoder.matches(credential, s.passwordHash())) {
+                throw new BadCredentialsException("Invalid credentials");
+            }
+            return buildTokenResponse(new AuthenticatedPrincipal(
+                    s.id(), s.role(), s.fullName(), null, s.email()));
+        }
+
         var buyer = buyerService.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Buyer not found"));
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
         if (!buyer.isActive()) {
-            throw new ValidationException("Buyer account is inactive");
+            throw new ValidationException("Account is inactive");
         }
-        if (!passwordEncoder.matches(password, buyer.passwordHash())) {
+        if (!passwordEncoder.matches(credential, buyer.passwordHash())) {
             throw new BadCredentialsException("Invalid credentials");
         }
-        AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
-                buyer.id(), Role.BUYER, buyer.displayName(), buyer.phone(), buyer.email());
-        return buildTokenResponse(principal);
+        return buildTokenResponse(new AuthenticatedPrincipal(
+                buyer.id(), Role.BUYER, buyer.displayName(), buyer.phone(), buyer.email()));
     }
 
     @Override
@@ -126,13 +139,6 @@ class AuthServiceImpl implements AuthService {
     public TokenResponse issueTokensForBuyer(Buyer buyer) {
         AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
                 buyer.id(), Role.BUYER, buyer.displayName(), buyer.phone(), buyer.email());
-        return buildTokenResponse(principal);
-    }
-
-    @Override
-    public TokenResponse issueTokensForFarmer(Farmer farmer) {
-        AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
-                farmer.id(), Role.FARMER, farmer.fullName(), farmer.phone().value(), null);
         return buildTokenResponse(principal);
     }
 

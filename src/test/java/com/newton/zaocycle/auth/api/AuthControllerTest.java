@@ -1,7 +1,7 @@
 package com.newton.zaocycle.auth.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.newton.zaocycle.auth.api.dto.FarmerLoginRequest;
+import com.newton.zaocycle.auth.api.dto.UnifiedLoginRequest;
 import com.newton.zaocycle.farmer.application.FarmerService;
 import com.newton.zaocycle.farmer.application.command.RegisterFarmerCommand;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
@@ -63,6 +63,7 @@ class AuthControllerTest {
 
     private static final String TEST_PHONE = "+254700000099";
     private static final String TEST_PIN   = "5678";
+    private static final String LOGIN_URL  = "/api/v1/auth/login";
 
     @BeforeEach
     void setUp() {
@@ -77,10 +78,10 @@ class AuthControllerTest {
     }
 
     @Test
-    void farmerLogin_validCredentials_returnsTokenShape() throws Exception {
-        mockMvc.perform(post("/api/v1/auth/farmer/login")
+    void login_farmerPhone_validPin_returnsTokenShape() throws Exception {
+        mockMvc.perform(post(LOGIN_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FarmerLoginRequest(TEST_PHONE, TEST_PIN))))
+                        .content(objectMapper.writeValueAsString(new UnifiedLoginRequest(TEST_PHONE, TEST_PIN))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.refreshToken").isNotEmpty())
@@ -90,26 +91,26 @@ class AuthControllerTest {
     }
 
     @Test
-    void farmerLogin_wrongPin_returns401() throws Exception {
-        mockMvc.perform(post("/api/v1/auth/farmer/login")
+    void login_farmerPhone_wrongPin_returns401() throws Exception {
+        mockMvc.perform(post(LOGIN_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FarmerLoginRequest(TEST_PHONE, "wrong-pin"))))
+                        .content(objectMapper.writeValueAsString(new UnifiedLoginRequest(TEST_PHONE, "wrong-pin"))))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void farmerLogin_unknownPhone_returns404() throws Exception {
-        mockMvc.perform(post("/api/v1/auth/farmer/login")
+    void login_unknownPhone_returns401() throws Exception {
+        mockMvc.perform(post(LOGIN_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FarmerLoginRequest("+254799999999", TEST_PIN))))
-                .andExpect(status().isNotFound());
+                        .content(objectMapper.writeValueAsString(new UnifiedLoginRequest("+254799999999", TEST_PIN))))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void farmerLogin_blankFields_returns400() throws Exception {
-        mockMvc.perform(post("/api/v1/auth/farmer/login")
+    void login_blankFields_returns400() throws Exception {
+        mockMvc.perform(post(LOGIN_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new FarmerLoginRequest("", ""))))
+                        .content(objectMapper.writeValueAsString(new UnifiedLoginRequest("", ""))))
                 .andExpect(status().isBadRequest());
     }
 }

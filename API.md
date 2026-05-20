@@ -9,7 +9,7 @@
 
 ## Table of Contents
 
-1. [Authentication & Tokens](#1-authentication--tokens)
+1. [Authentication & Tokens](#1-authentication--tokens) — unified login, `/me`, refresh, logout
 2. [Buyer Profile](#2-buyer-profile)
 3. [Products (Public)](#3-products-public)
 4. [Buyer Orders](#4-buyer-orders)
@@ -37,11 +37,82 @@
 
 ## 1. Authentication & Tokens
 
-All auth endpoints are **public** (no token required).
-
 Tokens expire: access token = 15 min, refresh token = 30 days.
 
-### POST `/api/v1/auth/buyer/register`
+### POST `/api/v1/auth/login` — Public
+Single login endpoint for all user types. The backend detects identity from the identifier format — no role selection needed on the frontend.
+
+| `identifier` format | Credential | Resolved role |
+|---|---|---|
+| E.164 phone (`+254...`) | PIN (short numeric) | `FARMER` |
+| E.164 phone (`+254...`) | Password | `RIDER` |
+| Email address | Password | `COOP_MANAGER` / `ADMIN` |
+| Email address | Password | `BUYER` |
+
+**Request body:**
+```json
+{
+  "identifier": "+254712345678",
+  "credential": "1234"
+}
+```
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `identifier` | string | yes | E.164 phone number or email address |
+| `credential` | string | yes | PIN (farmers) or password (all others) |
+
+**Response `200 OK`:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
+  "tokenType": "Bearer",
+  "expiresIn": 900,
+  "user": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "role": "FARMER",
+    "displayName": "John Kamau"
+  }
+}
+```
+
+**Error responses:**
+- `400 Bad Request` — blank `identifier` or `credential`
+- `401 Unauthorized` — unrecognised identifier, wrong credential, or incomplete farmer registration
+- `422 Unprocessable Entity` — account is inactive
+
+The frontend should redirect to the appropriate dashboard based on `user.role` in the response.
+
+---
+
+### GET `/api/v1/auth/me` — Requires authentication
+Returns the authenticated user's identity from the current access token. Use this on app startup to restore session state without decoding the JWT client-side.
+
+**Headers:** `Authorization: Bearer <accessToken>`
+
+**Response `200 OK`:**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "role": "FARMER",
+  "displayName": "John Kamau",
+  "phone": "+254712345678",
+  "email": null
+}
+```
+
+| Field | Notes |
+|---|---|
+| `phone` | Present for farmers and riders; `null` for staff |
+| `email` | Present for staff and buyers; `null` for farmers and riders |
+
+**Error responses:**
+- `401 Unauthorized` — missing or expired access token
+
+---
+
+### POST `/api/v1/auth/buyer/register` — Public
 Register a new buyer account and receive tokens immediately.
 
 **Request body:**
@@ -69,84 +140,11 @@ Register a new buyer account and receive tokens immediately.
 | `address` | string | no | Physical delivery address |
 | `ward` | string | no | One of the 4 Kirinyaga ward names |
 
-**Response `200 OK`:**
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
-  "tokenType": "Bearer",
-  "expiresIn": 900,
-  "user": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "role": "BUYER",
-    "displayName": "St. Mary's Primary"
-  }
-}
-```
+**Response `200 OK`:** `TokenResponse` (same shape as `/auth/login`).
 
 ---
 
-### POST `/api/v1/auth/buyer/login`
-Login with buyer email + password.
-
-**Request body:**
-```json
-{
-  "email": "alice@school.go.ke",
-  "password": "secret123"
-}
-```
-
-**Response `200 OK`:** Same `TokenResponse` shape as register.
-
----
-
-### POST `/api/v1/auth/farmer/login`
-Farmer login uses phone number + USSD-set PIN.
-
-**Request body:**
-```json
-{
-  "phone": "+254712345678",
-  "pin": "1234"
-}
-```
-
-**Response `200 OK`:** `TokenResponse` with `role: "FARMER"`.
-
----
-
-### POST `/api/v1/auth/rider/login`
-Rider login uses phone number + password.
-
-**Request body:**
-```json
-{
-  "phone": "+254722000001",
-  "password": "riderpass"
-}
-```
-
-**Response `200 OK`:** `TokenResponse` with `role: "RIDER"`.
-
----
-
-### POST `/api/v1/auth/staff/login`
-Staff (COOP_MANAGER / ADMIN) login via email + password.
-
-**Request body:**
-```json
-{
-  "email": "manager@zaocycle.co.ke",
-  "password": "adminpass"
-}
-```
-
-**Response `200 OK`:** `TokenResponse` with `role: "COOP_MANAGER"` or `"ADMIN"`.
-
----
-
-### POST `/api/v1/auth/refresh`
+### POST `/api/v1/auth/refresh` — Public
 Exchange a still-valid refresh token for a new token pair.
 
 **Request body:**
@@ -160,7 +158,7 @@ Exchange a still-valid refresh token for a new token pair.
 
 ---
 
-### POST `/api/v1/auth/logout`
+### POST `/api/v1/auth/logout` — Public
 Invalidates the refresh token (server-side revocation via Redis).
 
 **Request body:**

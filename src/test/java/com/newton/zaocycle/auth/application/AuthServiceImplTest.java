@@ -11,7 +11,6 @@ import com.newton.zaocycle.farmer.domain.model.Farmer;
 import com.newton.zaocycle.rider.application.RiderService;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
 import com.newton.zaocycle.shared.domain.Ward;
-import com.newton.zaocycle.shared.exception.NotFoundException;
 import com.newton.zaocycle.shared.exception.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +53,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void loginFarmer_validCredentials_returnsToken() {
+    void loginUnified_farmerPhone_validPin_returnsToken() {
         UUID id = UUID.randomUUID();
         PhoneNumber phone = PhoneNumber.of("+254700000001");
         Farmer farmer = new Farmer(id, phone, "John Doe", Ward.MWEA, "hashed-pin", true, Instant.now(), Instant.now());
@@ -64,7 +63,7 @@ class AuthServiceImplTest {
         when(jwtService.issueAccessToken(any())).thenReturn("access-token");
         when(jwtService.issueRefreshToken(any())).thenReturn("refresh-token");
 
-        TokenResponse response = authService.loginFarmer("+254700000001", "1234");
+        TokenResponse response = authService.loginUnified("+254700000001", "1234");
 
         assertThat(response.accessToken()).isEqualTo("access-token");
         assertThat(response.refreshToken()).isEqualTo("refresh-token");
@@ -73,27 +72,28 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void loginFarmer_unknownPhone_throwsNotFound() {
+    void loginUnified_unknownPhone_throwsBadCredentials() {
         when(farmerService.findByPhone(any())).thenReturn(Optional.empty());
+        when(riderService.findByPhone(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authService.loginFarmer("+254700000002", "1234"))
-                .isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> authService.loginUnified("+254700000002", "1234"))
+                .isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
-    void loginFarmer_incompleteRegistration_throwsValidation() {
+    void loginUnified_incompleteRegistration_throwsBadCredentials() {
         UUID id = UUID.randomUUID();
         PhoneNumber phone = PhoneNumber.of("+254700000003");
         Farmer farmer = new Farmer(id, phone, null, null, null, false, Instant.now(), Instant.now());
 
         when(farmerService.findByPhone(phone)).thenReturn(Optional.of(farmer));
 
-        assertThatThrownBy(() -> authService.loginFarmer("+254700000003", "1234"))
-                .isInstanceOf(ValidationException.class);
+        assertThatThrownBy(() -> authService.loginUnified("+254700000003", "1234"))
+                .isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
-    void loginFarmer_wrongPin_throwsBadCredentials() {
+    void loginUnified_wrongPin_throwsBadCredentials() {
         UUID id = UUID.randomUUID();
         PhoneNumber phone = PhoneNumber.of("+254700000004");
         Farmer farmer = new Farmer(id, phone, "Jane Doe", Ward.NDIA, "hashed-pin", true, Instant.now(), Instant.now());
@@ -101,19 +101,25 @@ class AuthServiceImplTest {
         when(farmerService.findByPhone(phone)).thenReturn(Optional.of(farmer));
         when(passwordEncoder.matches("wrong", "hashed-pin")).thenReturn(false);
 
-        assertThatThrownBy(() -> authService.loginFarmer("+254700000004", "wrong"))
+        assertThatThrownBy(() -> authService.loginUnified("+254700000004", "wrong"))
                 .isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
-    void loginStaff_inactiveAccount_throwsValidation() {
+    void loginUnified_inactiveStaff_throwsValidation() {
         StaffUser staff = new StaffUser(UUID.randomUUID(), "admin@test.com", "hash",
                 "Admin", Role.ADMIN, false, Instant.now(), Instant.now());
 
         when(staffUserRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(staff));
 
-        assertThatThrownBy(() -> authService.loginStaff("admin@test.com", "password"))
+        assertThatThrownBy(() -> authService.loginUnified("admin@test.com", "password"))
                 .isInstanceOf(ValidationException.class);
+    }
+
+    @Test
+    void loginUnified_invalidIdentifierFormat_throwsBadCredentials() {
+        assertThatThrownBy(() -> authService.loginUnified("not-a-phone-or-email", "secret"))
+                .isInstanceOf(BadCredentialsException.class);
     }
 
     @Test
