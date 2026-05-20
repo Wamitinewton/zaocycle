@@ -5,9 +5,11 @@ import com.newton.zaocycle.collection.application.PickupFilter;
 import com.newton.zaocycle.collection.application.PickupQueryService;
 import com.newton.zaocycle.collection.application.PickupService;
 import com.newton.zaocycle.collection.domain.model.PickupStatus;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +31,7 @@ public class PickupController {
     }
 
     @GetMapping
-    public Page<WastePickupResponse> search(
+    public ResponseEntity<ApiResponse<Page<WastePickupResponse>>> search(
             @RequestParam(required = false) PickupStatus status,
             @RequestParam(required = false) UUID riderId,
             @RequestParam(required = false) UUID farmerId,
@@ -37,17 +39,19 @@ public class PickupController {
             @RequestParam(required = false) LocalDate toDate,
             @PageableDefault(size = 20, sort = "scheduledFor") Pageable pageable) {
         PickupFilter filter = new PickupFilter(status, riderId, farmerId, fromDate, toDate);
-        return pickupQueryService.search(filter, pageable).map(WastePickupResponse::from);
+        Page<WastePickupResponse> page = pickupQueryService.search(filter, pageable).map(WastePickupResponse::from);
+        return ResponseEntity.ok(ApiResponse.ok(page));
     }
 
     @PostMapping("/{id}/assign")
-    public WastePickupResponse assign(@PathVariable UUID id, @RequestParam UUID riderId) {
-        return WastePickupResponse.from(pickupService.assignRider(id, riderId));
+    public ResponseEntity<ApiResponse<WastePickupResponse>> assign(@PathVariable UUID id,
+                                                                   @RequestParam UUID riderId) {
+        return ResponseEntity.ok(ApiResponse.ok(WastePickupResponse.from(pickupService.assignRider(id, riderId))));
     }
 
     @PostMapping("/{id}/cancel")
-    public WastePickupResponse cancel(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<WastePickupResponse>> cancel(@PathVariable UUID id) {
         pickupService.cancel(id);
-        return WastePickupResponse.from(pickupQueryService.findById(id));
+        return ResponseEntity.ok(ApiResponse.ok(WastePickupResponse.from(pickupQueryService.findById(id))));
     }
 }

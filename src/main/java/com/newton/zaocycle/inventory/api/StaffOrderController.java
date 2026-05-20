@@ -3,9 +3,11 @@ package com.newton.zaocycle.inventory.api;
 import com.newton.zaocycle.inventory.api.dto.OrderResponse;
 import com.newton.zaocycle.inventory.application.OrderService;
 import com.newton.zaocycle.inventory.domain.model.OrderStatus;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,18 +25,20 @@ public class StaffOrderController {
     }
 
     @GetMapping
-    public Page<OrderResponse> listAll(@RequestParam(required = false) OrderStatus status,
-                                       @PageableDefault(size = 20) Pageable pageable) {
-        return orderService.findAll(status, pageable).map(OrderResponse::from);
+    public ResponseEntity<ApiResponse<Page<OrderResponse>>> listAll(
+            @RequestParam(required = false) OrderStatus status,
+            @PageableDefault(size = 20) Pageable pageable) {
+        Page<OrderResponse> page = orderService.findAll(status, pageable).map(OrderResponse::from);
+        return ResponseEntity.ok(ApiResponse.ok(page));
     }
 
     @PostMapping("/{id}/ready")
-    public OrderResponse markReady(@PathVariable UUID id) {
-        return OrderResponse.from(orderService.markReadyForDelivery(id));
+    public ResponseEntity<ApiResponse<OrderResponse>> markReady(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(OrderResponse.from(orderService.markReadyForDelivery(id))));
     }
 
     @PostMapping("/{id}/deliver")
-    public OrderResponse markDelivered(@PathVariable UUID id) {
-        return OrderResponse.from(orderService.markDelivered(id));
+    public ResponseEntity<ApiResponse<OrderResponse>> markDelivered(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(OrderResponse.from(orderService.markDelivered(id))));
     }
 }

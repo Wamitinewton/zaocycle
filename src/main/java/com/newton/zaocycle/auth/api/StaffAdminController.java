@@ -3,6 +3,7 @@ package com.newton.zaocycle.auth.api;
 import com.newton.zaocycle.auth.api.dto.CreateStaffRequest;
 import com.newton.zaocycle.auth.api.dto.StaffResponse;
 import com.newton.zaocycle.auth.application.StaffService;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import com.newton.zaocycle.shared.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,34 +26,36 @@ public class StaffAdminController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<StaffResponse> create(@Valid @RequestBody CreateStaffRequest request) {
+    public ResponseEntity<ApiResponse<StaffResponse>> create(@Valid @RequestBody CreateStaffRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(StaffResponse.from(staffService.create(request.toCommand())));
+                .body(ApiResponse.ok(StaffResponse.from(staffService.create(request.toCommand()))));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<StaffResponse> listAll() {
-        return staffService.findAll().stream().map(StaffResponse::from).toList();
+    public ResponseEntity<ApiResponse<List<StaffResponse>>> listAll() {
+        List<StaffResponse> body = staffService.findAll().stream().map(StaffResponse::from).toList();
+        return ResponseEntity.ok(ApiResponse.ok(body));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COOP_MANAGER')")
-    public StaffResponse getById(@PathVariable UUID id) {
-        return staffService.findById(id)
+    public ResponseEntity<ApiResponse<StaffResponse>> getById(@PathVariable UUID id) {
+        StaffResponse response = staffService.findById(id)
                 .map(StaffResponse::from)
                 .orElseThrow(() -> new NotFoundException("Staff user not found: " + id));
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public StaffResponse deactivate(@PathVariable UUID id) {
-        return StaffResponse.from(staffService.deactivate(id));
+    public ResponseEntity<ApiResponse<StaffResponse>> deactivate(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(StaffResponse.from(staffService.deactivate(id))));
     }
 
     @PostMapping("/{id}/activate")
     @PreAuthorize("hasRole('ADMIN')")
-    public StaffResponse reactivate(@PathVariable UUID id) {
-        return StaffResponse.from(staffService.reactivate(id));
+    public ResponseEntity<ApiResponse<StaffResponse>> reactivate(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(StaffResponse.from(staffService.reactivate(id))));
     }
 }

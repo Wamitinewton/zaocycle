@@ -8,7 +8,9 @@ import com.newton.zaocycle.farmer.application.FarmerService;
 import com.newton.zaocycle.farmer.domain.model.Farmer;
 import com.newton.zaocycle.pesticide.application.PesticideApplicationService;
 import com.newton.zaocycle.pesticide.domain.model.PesticideApplication;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import com.newton.zaocycle.shared.exception.NotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +38,7 @@ public class PublicVerificationController {
 
     @GetMapping("/verify/{token}")
     @Transactional
-    public PublicCertificateResponse verify(@PathVariable String token) {
+    public ResponseEntity<ApiResponse<PublicCertificateResponse>> verify(@PathVariable String token) {
         Certificate cert = certService.findByToken(token)
                 .orElseThrow(() -> new NotFoundException("Certificate not found"));
         certService.recordVerification(cert.id());
@@ -47,6 +49,7 @@ public class PublicVerificationController {
                 .orElseThrow(() -> new NotFoundException("Farmer: " + application.farmerId()));
         String ward = farmer.ward() != null ? farmer.ward().displayName() : "";
 
-        return PublicCertificateResponse.from(cert, application, chemicalName, farmer.fullName(), ward);
+        return ResponseEntity.ok(ApiResponse.ok(
+                PublicCertificateResponse.from(cert, application, chemicalName, farmer.fullName(), ward)));
     }
 }

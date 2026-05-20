@@ -7,6 +7,23 @@
 
 ---
 
+## Response Envelope
+
+All successful responses (except `204 No Content`, webhooks, and USSD) are wrapped in a standard envelope:
+
+```json
+{
+  "success": true,
+  "data": <response body>,
+  "message": null
+}
+```
+
+`message` is non-null only when the endpoint sends an informational string alongside the data.
+Error responses are **not** wrapped — see [Section 22](#22-error-responses).
+
+---
+
 ## Table of Contents
 
 1. [Authentication & Tokens](#1-authentication--tokens) — unified login, `/me`, refresh, logout
@@ -69,15 +86,19 @@ needed on the frontend.
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
-  "tokenType": "Bearer",
-  "expiresIn": 900,
-  "user": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "role": "FARMER",
-    "displayName": "John Kamau"
-  }
+  "success": true,
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
+    "tokenType": "Bearer",
+    "expiresIn": 900,
+    "user": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "role": "FARMER",
+      "displayName": "John Kamau"
+    }
+  },
+  "message": null
 }
 ```
 
@@ -87,7 +108,7 @@ needed on the frontend.
 - `401 Unauthorized` — unrecognised identifier, wrong credential, or incomplete farmer registration
 - `422 Unprocessable Entity` — account is inactive
 
-The frontend should redirect to the appropriate dashboard based on `user.role` in the response.
+The frontend should redirect to the appropriate dashboard based on `data.user.role` in the response.
 
 ---
 
@@ -102,18 +123,22 @@ state without decoding the JWT client-side.
 
 ```json
 {
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "role": "FARMER",
-  "displayName": "John Kamau",
-  "phone": "+254712345678",
-  "email": null
+  "success": true,
+  "data": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "role": "FARMER",
+    "displayName": "John Kamau",
+    "phone": "+254712345678",
+    "email": null
+  },
+  "message": null
 }
 ```
 
-| Field   | Notes                                                       |
-|---------|-------------------------------------------------------------|
-| `phone` | Present for farmers and riders; `null` for staff            |
-| `email` | Present for staff and buyers; `null` for farmers and riders |
+| Field          | Notes                                                       |
+|----------------|-------------------------------------------------------------|
+| `data.phone`   | Present for farmers and riders; `null` for staff            |
+| `data.email`   | Present for staff and buyers; `null` for farmers and riders |
 
 **Error responses:**
 
@@ -151,7 +176,7 @@ Register a new buyer account and receive tokens immediately.
 | `address`       | string | no       | Physical delivery address                         |
 | `ward`          | string | no       | One of the 4 Kirinyaga ward names                 |
 
-**Response `200 OK`:** `TokenResponse` (same shape as `/auth/login`).
+**Response `201 Created`:** Envelope wrapping `TokenResponse` (same shape as `data` in `/auth/login`).
 
 ---
 
@@ -167,7 +192,7 @@ Exchange a still-valid refresh token for a new token pair.
 }
 ```
 
-**Response `200 OK`:** New `TokenResponse`.
+**Response `200 OK`:** Envelope wrapping new `TokenResponse`.
 
 ---
 
@@ -183,7 +208,7 @@ Invalidates the refresh token (server-side revocation via Redis).
 }
 ```
 
-**Response `204 No Content`**
+**Response `204 No Content`** — no body.
 
 ---
 
@@ -199,14 +224,18 @@ Get the authenticated buyer's profile.
 
 ```json
 {
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "email": "alice@school.go.ke",
-  "phone": "+254712345678",
-  "buyerType": "SCHOOL",
-  "displayName": "St. Mary's Primary",
-  "contactPerson": "Alice Wanjiru",
-  "address": "Mwea Town, Kirinyaga",
-  "ward": "MWEA"
+  "success": true,
+  "data": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "email": "alice@school.go.ke",
+    "phone": "+254712345678",
+    "buyerType": "SCHOOL",
+    "displayName": "St. Mary's Primary",
+    "contactPerson": "Alice Wanjiru",
+    "address": "Mwea Town, Kirinyaga",
+    "ward": "MWEA"
+  },
+  "message": null
 }
 ```
 
@@ -234,7 +263,7 @@ Update the authenticated buyer's profile.
 | `address`       | string | no       |
 | `ward`          | string | no       |
 
-**Response `200 OK`:** Updated `BuyerProfileResponse`.
+**Response `200 OK`:** Envelope wrapping updated `BuyerProfileResponse`.
 
 ---
 
@@ -249,18 +278,22 @@ List all active briquette products.
 **Response `200 OK`:**
 
 ```json
-[
-  {
-    "id": "a1b2c3d4-...",
-    "sku": "BRQ-5KG",
-    "name": "5 kg Briquette Bag",
-    "description": "Compressed agricultural waste briquettes, 5 kg pack",
-    "weightKg": 5.00,
-    "unitPrice": 350.00,
-    "imageUrl": "https://cdn.zaocycle.app/products/brq-5kg.jpg",
-    "sortOrder": 1
-  }
-]
+{
+  "success": true,
+  "data": [
+    {
+      "id": "a1b2c3d4-...",
+      "sku": "BRQ-5KG",
+      "name": "5 kg Briquette Bag",
+      "description": "Compressed agricultural waste briquettes, 5 kg pack",
+      "weightKg": 5.00,
+      "unitPrice": 350.00,
+      "imageUrl": "https://cdn.zaocycle.app/products/brq-5kg.jpg",
+      "sortOrder": 1
+    }
+  ],
+  "message": null
+}
 ```
 
 ---
@@ -271,7 +304,7 @@ Get a single product by UUID.
 
 **Path param:** `id` — UUID of the product.
 
-**Response `200 OK`:** Single `ProductResponse` (same fields as list item).
+**Response `200 OK`:** Envelope wrapping single `ProductResponse` (same fields as list item).
 
 **Response `404 Not Found`:** Product does not exist.
 
@@ -311,22 +344,26 @@ Place a new briquette order. Triggers M-Pesa STK Push for payment.
 
 ```json
 {
-  "id": "f47ac10b-...",
-  "buyerId": "3fa85f64-...",
-  "productId": "a1b2c3d4-...",
-  "quantity": 3,
-  "unitPrice": 350.00,
-  "totalKg": 15.00,
-  "totalAmount": 1050.00,
-  "deliveryAddress": "Main Street, Mwea",
-  "deliveryPhone": "+254712345678",
-  "requestedDelivery": "2025-06-15",
-  "deliveredAt": null,
-  "status": "PENDING_PAYMENT",
-  "mpesaTransactionId": null,
-  "notes": "Leave at the gate",
-  "createdAt": "2025-05-19T10:00:00Z",
-  "updatedAt": "2025-05-19T10:00:00Z"
+  "success": true,
+  "data": {
+    "id": "f47ac10b-...",
+    "buyerId": "3fa85f64-...",
+    "productId": "a1b2c3d4-...",
+    "quantity": 3,
+    "unitPrice": 350.00,
+    "totalKg": 15.00,
+    "totalAmount": 1050.00,
+    "deliveryAddress": "Main Street, Mwea",
+    "deliveryPhone": "+254712345678",
+    "requestedDelivery": "2025-06-15",
+    "deliveredAt": null,
+    "status": "PENDING_PAYMENT",
+    "mpesaTransactionId": null,
+    "notes": "Leave at the gate",
+    "createdAt": "2025-05-19T10:00:00Z",
+    "updatedAt": "2025-05-19T10:00:00Z"
+  },
+  "message": null
 }
 ```
 
@@ -347,13 +384,17 @@ List the authenticated buyer's orders, paginated.
 
 ```json
 {
-  "content": [
-    /* array of OrderResponse */
-  ],
-  "totalElements": 5,
-  "totalPages": 1,
-  "size": 20,
-  "number": 0
+  "success": true,
+  "data": {
+    "content": [
+      /* array of OrderResponse */
+    ],
+    "totalElements": 5,
+    "totalPages": 1,
+    "size": 20,
+    "number": 0
+  },
+  "message": null
 }
 ```
 
@@ -363,7 +404,7 @@ List the authenticated buyer's orders, paginated.
 
 Get a single order. The buyer can only access their own orders.
 
-**Response `200 OK`:** `OrderResponse`.  
+**Response `200 OK`:** Envelope wrapping `OrderResponse`.  
 **Response `404 Not Found`:** Order not found or not owned by this buyer.
 
 ---
@@ -372,7 +413,7 @@ Get a single order. The buyer can only access their own orders.
 
 Cancel an order (only if `PENDING_PAYMENT`).
 
-**Response `200 OK`:** Updated `OrderResponse` with `status: "CANCELLED"`.
+**Response `200 OK`:** Envelope wrapping updated `OrderResponse` with `status: "CANCELLED"`.
 
 ---
 
@@ -472,7 +513,7 @@ List all active chemicals in the system.
 
 Get a single chemical by UUID.
 
-**Response `200 OK`:** Single `ChemicalResponse` wrapped in `ApiResponse`.  
+**Response `200 OK`:** Envelope wrapping single `ChemicalResponse`.  
 **Response `404 Not Found`:** Chemical not found.
 
 ---
@@ -492,15 +533,19 @@ Each call increments the `verifiedCount`.
 
 ```json
 {
-  "token": "ZAO-A1B2C3D4",
-  "status": "ACTIVE",
-  "issuedAt": "2025-05-15T08:00:00Z",
-  "expiresAt": "2025-05-29T08:00:00Z",
-  "verifiedCount": 3,
-  "crop": "Rice",
-  "chemicalName": "Mancozeb 80%",
-  "farmerName": "John Kamau",
-  "ward": "Mwea"
+  "success": true,
+  "data": {
+    "token": "ZAO-A1B2C3D4",
+    "status": "ACTIVE",
+    "issuedAt": "2025-05-15T08:00:00Z",
+    "expiresAt": "2025-05-29T08:00:00Z",
+    "verifiedCount": 3,
+    "crop": "Rice",
+    "chemicalName": "Mancozeb 80%",
+    "farmerName": "John Kamau",
+    "ward": "Mwea"
+  },
+  "message": null
 }
 ```
 
@@ -524,7 +569,11 @@ Upload a profile photo. Multipart form upload.
 
 ```json
 {
-  "imageUrl": "https://sampleokoasem.sfo3.digitaloceanspaces.com/profiles/uuid.jpg"
+  "success": true,
+  "data": {
+    "imageUrl": "https://sampleokoasem.sfo3.digitaloceanspaces.com/profiles/uuid.jpg"
+  },
+  "message": null
 }
 ```
 
@@ -538,7 +587,11 @@ Get the authenticated user's current profile image URL.
 
 ```json
 {
-  "imageUrl": "https://sampleokoasem.sfo3.digitaloceanspaces.com/profiles/uuid.jpg"
+  "success": true,
+  "data": {
+    "imageUrl": "https://sampleokoasem.sfo3.digitaloceanspaces.com/profiles/uuid.jpg"
+  },
+  "message": null
 }
 ```
 
@@ -555,24 +608,28 @@ Get all waste pickups for the authenticated farmer.
 **Response `200 OK`:**
 
 ```json
-[
-  {
-    "id": "f1a2b3c4-...",
-    "farmerId": "c0d1e2f3-...",
-    "riderId": "b9a8c7d6-...",
-    "applicationId": "d1e2f3a4-...",
-    "requestedAt": "2025-05-10T07:30:00Z",
-    "scheduledFor": "2025-05-11",
-    "status": "PAID",
-    "weightKg": 12.50,
-    "photoUrl": "https://cdn.zaocycle.app/pickups/photo.jpg",
-    "notes": "Two bags collected",
-    "payoutAmount": 62.50,
-    "collectedAt": "2025-05-11T09:00:00Z",
-    "paidAt": "2025-05-11T14:30:00Z",
-    "createdAt": "2025-05-10T07:30:00Z"
-  }
-]
+{
+  "success": true,
+  "data": [
+    {
+      "id": "f1a2b3c4-...",
+      "farmerId": "c0d1e2f3-...",
+      "riderId": "b9a8c7d6-...",
+      "applicationId": "d1e2f3a4-...",
+      "requestedAt": "2025-05-10T07:30:00Z",
+      "scheduledFor": "2025-05-11",
+      "status": "PAID",
+      "weightKg": 12.50,
+      "photoUrl": "https://cdn.zaocycle.app/pickups/photo.jpg",
+      "notes": "Two bags collected",
+      "payoutAmount": 62.50,
+      "collectedAt": "2025-05-11T09:00:00Z",
+      "paidAt": "2025-05-11T14:30:00Z",
+      "createdAt": "2025-05-10T07:30:00Z"
+    }
+  ],
+  "message": null
+}
 ```
 
 ---
@@ -585,19 +642,23 @@ Get the authenticated farmer's earnings summary.
 
 ```json
 {
-  "total": 312.50,
-  "thisMonth": 125.00,
-  "pickupCount": 25,
-  "recentPayouts": [
-    {
-      "amount": 62.50,
-      "date": "2025-05-11"
-    },
-    {
-      "amount": 37.50,
-      "date": "2025-05-04"
-    }
-  ]
+  "success": true,
+  "data": {
+    "total": 312.50,
+    "thisMonth": 125.00,
+    "pickupCount": 25,
+    "recentPayouts": [
+      {
+        "amount": 62.50,
+        "date": "2025-05-11"
+      },
+      {
+        "amount": 37.50,
+        "date": "2025-05-04"
+      }
+    ]
+  },
+  "message": null
 }
 ```
 
@@ -611,7 +672,15 @@ Requires role: **RIDER**
 
 Get all pickups scheduled for the authenticated rider today.
 
-**Response `200 OK`:** Array of `WastePickupResponse` (same shape as section 10).
+**Response `200 OK`:** Envelope wrapping array of `RiderPickupDetailResponse`.
+
+---
+
+### GET `/api/v1/rider/pickups/history`
+
+Get the authenticated rider's full pickup history.
+
+**Response `200 OK`:** Envelope wrapping array of `RiderPickupDetailResponse`.
 
 ---
 
@@ -619,7 +688,7 @@ Get all pickups scheduled for the authenticated rider today.
 
 Get a specific pickup by ID.
 
-**Response `200 OK`:** `WastePickupResponse`.
+**Response `200 OK`:** Envelope wrapping `RiderPickupDetailResponse`.
 
 ---
 
@@ -646,7 +715,7 @@ curl -X POST /api/v1/rider/pickups/{id}/collect \
   -F "notes=Two bags"
 ```
 
-**Response `200 OK`:** Updated `WastePickupResponse` with `status: "COLLECTED"`.
+**Response `200 OK`:** Envelope wrapping updated `RiderPickupDetailResponse` with `status: "COLLECTED"`.
 
 ---
 
@@ -670,7 +739,21 @@ Search pickups with optional filters, paginated.
 | `size` | int | Default 20 |
 | `sort` | string | Default `scheduledFor` |
 
-**Response `200 OK`:** Paginated `WastePickupResponse`.
+**Response `200 OK`:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "content": [ /* array of WastePickupResponse */ ],
+    "totalElements": 42,
+    "totalPages": 3,
+    "size": 20,
+    "number": 0
+  },
+  "message": null
+}
+```
 
 ---
 
@@ -680,7 +763,7 @@ Assign a rider to a pickup.
 
 **Query param:** `riderId` — UUID of the rider to assign.
 
-**Response `200 OK`:** Updated `WastePickupResponse` with `status: "ASSIGNED"`.
+**Response `200 OK`:** Envelope wrapping updated `WastePickupResponse` with `status: "ASSIGNED"`.
 
 ---
 
@@ -688,7 +771,7 @@ Assign a rider to a pickup.
 
 Cancel a pickup.
 
-**Response `200 OK`:** Updated `WastePickupResponse` with `status: "CANCELLED"`.
+**Response `200 OK`:** Envelope wrapping updated `WastePickupResponse` with `status: "CANCELLED"`.
 
 ---
 
@@ -725,16 +808,20 @@ Record a waste intake batch (collection of multiple pickups into the warehouse).
 
 ```json
 {
-  "id": "a1b2c3d4-...",
-  "intakeDate": "2025-05-19",
-  "totalKg": 145.50,
-  "pickupIds": [
-    "f1a2b3c4-...",
-    "e2d3c4b5-..."
-  ],
-  "notes": "Morning batch",
-  "recordedBy": "staff-uuid-...",
-  "createdAt": "2025-05-19T08:00:00Z"
+  "success": true,
+  "data": {
+    "id": "a1b2c3d4-...",
+    "intakeDate": "2025-05-19",
+    "totalKg": 145.50,
+    "pickupIds": [
+      "f1a2b3c4-...",
+      "e2d3c4b5-..."
+    ],
+    "notes": "Morning batch",
+    "recordedBy": "staff-uuid-...",
+    "createdAt": "2025-05-19T08:00:00Z"
+  },
+  "message": null
 }
 ```
 
@@ -744,7 +831,7 @@ Record a waste intake batch (collection of multiple pickups into the warehouse).
 
 List all recorded intake batches.
 
-**Response `200 OK`:** Array of `WasteIntakeBatch`.
+**Response `200 OK`:** Envelope wrapping array of `WasteIntakeBatch`.
 
 ---
 
@@ -778,13 +865,17 @@ Record a new briquette production batch.
 
 ```json
 {
-  "id": "b2c3d4e5-...",
-  "batchNumber": "BRQ-2025-05-001",
-  "kgProduced": 120.00,
-  "kgRemaining": 120.00,
-  "producedAt": "2025-05-19T06:00:00Z",
-  "sourceIntakeId": "a1b2c3d4-...",
-  "createdAt": "2025-05-19T06:05:00Z"
+  "success": true,
+  "data": {
+    "id": "b2c3d4e5-...",
+    "batchNumber": "BRQ-2025-05-001",
+    "kgProduced": 120.00,
+    "kgRemaining": 120.00,
+    "producedAt": "2025-05-19T06:00:00Z",
+    "sourceIntakeId": "a1b2c3d4-...",
+    "createdAt": "2025-05-19T06:05:00Z"
+  },
+  "message": null
 }
 ```
 
@@ -794,7 +885,7 @@ Record a new briquette production batch.
 
 List all production batches.
 
-**Response `200 OK`:** Array of `BriquetteBatch`.
+**Response `200 OK`:** Envelope wrapping array of `BriquetteBatch`.
 
 ---
 
@@ -805,7 +896,11 @@ Get total available briquette stock in kg.
 **Response `200 OK`:**
 
 ```json
-240.50
+{
+  "success": true,
+  "data": 240.50,
+  "message": null
+}
 ```
 
 ---
@@ -825,7 +920,21 @@ List all orders, optionally filtered by status.
 | `page` | int | Default 0 |
 | `size` | int | Default 20 |
 
-**Response `200 OK`:** Paginated `OrderResponse`.
+**Response `200 OK`:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "content": [ /* array of OrderResponse */ ],
+    "totalElements": 15,
+    "totalPages": 1,
+    "size": 20,
+    "number": 0
+  },
+  "message": null
+}
+```
 
 ---
 
@@ -833,7 +942,7 @@ List all orders, optionally filtered by status.
 
 Mark an order as ready for delivery.
 
-**Response `200 OK`:** Updated `OrderResponse` with `status: "READY_FOR_DELIVERY"`.
+**Response `200 OK`:** Envelope wrapping updated `OrderResponse` with `status: "READY_FOR_DELIVERY"`.
 
 ---
 
@@ -841,7 +950,7 @@ Mark an order as ready for delivery.
 
 Mark an order as delivered.
 
-**Response `200 OK`:** Updated `OrderResponse` with `status: "DELIVERED"`.
+**Response `200 OK`:** Envelope wrapping updated `OrderResponse` with `status: "DELIVERED"`.
 
 ---
 
@@ -857,14 +966,18 @@ Get a full certificate record by its UUID.
 
 ```json
 {
-  "id": "c3d4e5f6-...",
-  "applicationId": "d1e2f3a4-...",
-  "token": "ZAO-A1B2C3D4",
-  "qrImageUrl": "https://cdn.zaocycle.app/certs/qr-uuid.png",
-  "status": "ACTIVE",
-  "issuedAt": "2025-05-15T08:00:00Z",
-  "expiresAt": "2025-05-29T08:00:00Z",
-  "verifiedCount": 3
+  "success": true,
+  "data": {
+    "id": "c3d4e5f6-...",
+    "applicationId": "d1e2f3a4-...",
+    "token": "ZAO-A1B2C3D4",
+    "qrImageUrl": "https://cdn.zaocycle.app/certs/qr-uuid.png",
+    "status": "ACTIVE",
+    "issuedAt": "2025-05-15T08:00:00Z",
+    "expiresAt": "2025-05-29T08:00:00Z",
+    "verifiedCount": 3
+  },
+  "message": null
 }
 ```
 
@@ -874,7 +987,7 @@ Get a full certificate record by its UUID.
 
 Revoke an active certificate.
 
-**Response `200 OK`:** Updated `CertificateResponse` with `status: "REVOKED"`.
+**Response `200 OK`:** Envelope wrapping updated `CertificateResponse` with `status: "REVOKED"`.
 
 ---
 
@@ -908,13 +1021,17 @@ Create a new staff user.
 
 ```json
 {
-  "id": "e4f5a6b7-...",
-  "email": "manager@zaocycle.co.ke",
-  "fullName": "Mary Njeri",
-  "role": "COOP_MANAGER",
-  "active": true,
-  "profileImageUrl": null,
-  "createdAt": "2025-05-19T09:00:00Z"
+  "success": true,
+  "data": {
+    "id": "e4f5a6b7-...",
+    "email": "manager@zaocycle.co.ke",
+    "fullName": "Mary Njeri",
+    "role": "COOP_MANAGER",
+    "active": true,
+    "profileImageUrl": null,
+    "createdAt": "2025-05-19T09:00:00Z"
+  },
+  "message": null
 }
 ```
 
@@ -924,7 +1041,7 @@ Create a new staff user.
 
 List all staff users.
 
-**Response `200 OK`:** Array of `StaffResponse`.
+**Response `200 OK`:** Envelope wrapping array of `StaffResponse`.
 
 ---
 
@@ -932,7 +1049,7 @@ List all staff users.
 
 Get a single staff user. Accessible by **ADMIN** or **COOP_MANAGER**.
 
-**Response `200 OK`:** `StaffResponse`.
+**Response `200 OK`:** Envelope wrapping `StaffResponse`.
 
 ---
 
@@ -940,7 +1057,7 @@ Get a single staff user. Accessible by **ADMIN** or **COOP_MANAGER**.
 
 Deactivate a staff user (soft delete — `active: false`).
 
-**Response `200 OK`:** Updated `StaffResponse` with `active: false`.
+**Response `200 OK`:** Envelope wrapping updated `StaffResponse` with `active: false`.
 
 ---
 
@@ -948,7 +1065,7 @@ Deactivate a staff user (soft delete — `active: false`).
 
 Reactivate a previously deactivated staff user.
 
-**Response `200 OK`:** Updated `StaffResponse` with `active: true`.
+**Response `200 OK`:** Envelope wrapping updated `StaffResponse` with `active: true`.
 
 ---
 
@@ -971,22 +1088,26 @@ Register a new rider.
 }
 ```
 
-| Field      | Type   | Required | Notes                                                  |
-|------------|--------|----------|--------------------------------------------------------|
-| `phone`    | string | yes      | E.164 format                                           |
-| `fullName` | string | yes      |                                                        |
+| Field      | Type   | Required | Notes                                                   |
+|------------|--------|----------|---------------------------------------------------------|
+| `phone`    | string | yes      | E.164 format                                            |
+| `fullName` | string | yes      |                                                         |
 | `ward`     | string | yes      | One of: `MWEA`, `GICHUGU`, `KIRINYAGA_CENTRAL`, `NDIA` |
-| `password` | string | yes      | Min 6 chars                                            |
+| `password` | string | yes      | Min 6 chars                                             |
 
 **Response `201 Created`:**
 
 ```json
 {
-  "id": "f5a6b7c8-...",
-  "phone": "+254722000001",
-  "fullName": "Peter Mwangi",
-  "ward": "MWEA",
-  "active": true
+  "success": true,
+  "data": {
+    "id": "f5a6b7c8-...",
+    "phone": "+254722000001",
+    "fullName": "Peter Mwangi",
+    "ward": "MWEA",
+    "active": true
+  },
+  "message": null
 }
 ```
 
@@ -996,7 +1117,7 @@ Register a new rider.
 
 Get a rider by ID. Accessible by **ADMIN** or **COOP_MANAGER**.
 
-**Response `200 OK`:** `RiderResponse`.  
+**Response `200 OK`:** Envelope wrapping `RiderResponse`.  
 **Response `404 Not Found`**
 
 ---
@@ -1005,7 +1126,7 @@ Get a rider by ID. Accessible by **ADMIN** or **COOP_MANAGER**.
 
 Deactivate a rider.
 
-**Response `200 OK`:** Updated `RiderResponse` with `active: false`.
+**Response `200 OK`:** Envelope wrapping updated `RiderResponse` with `active: false`.
 
 ---
 
@@ -1027,6 +1148,7 @@ Simulate harvest maturity for a pesticide application (fire the maturity event a
 ## 20. Webhooks & Callbacks
 
 These endpoints are called by third-party services (M-Pesa Daraja, Africa's Talking). **No authentication required.**
+Responses from these endpoints use the format expected by the external service — **not** the standard `ApiResponse` envelope.
 
 ### POST `/api/v1/payments/mpesa/b2c/result`
 
@@ -1088,6 +1210,7 @@ Africa's Talking inbound SMS webhook. Handles farmer SMS commands.
 ## 21. USSD Gateway (Telecom)
 
 Called by Africa's Talking USSD platform. Not intended for web frontend.
+Responses use plain text — **not** the standard `ApiResponse` envelope.
 
 ### POST `/api/v1/ussd/callback`
 
@@ -1100,7 +1223,7 @@ Handles the interactive USSD session for farmer registration and PIN operations.
 
 ## 22. Error Responses
 
-All errors return a consistent JSON body:
+All errors return a consistent JSON body (not wrapped in `ApiResponse`):
 
 ```json
 {

@@ -57,6 +57,7 @@ public class SecurityConfig {
                         // Auth — only the unauthenticated endpoints are public; /me requires a token
                         .requestMatchers(POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(POST, "/api/v1/auth/buyer/register").permitAll()
+                        .requestMatchers(POST, "/api/v1/auth/rider/register").permitAll()
                         .requestMatchers(POST, "/api/v1/auth/refresh").permitAll()
                         .requestMatchers(POST, "/api/v1/auth/logout").permitAll()
                         // Role-protected routes

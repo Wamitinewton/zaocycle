@@ -17,6 +17,8 @@ interface WastePickupJpaRepository
 
     List<WastePickupEntity> findByRiderIdAndScheduledFor(UUID riderId, LocalDate date);
 
+    List<WastePickupEntity> findByRiderId(UUID riderId);
+
     List<WastePickupEntity> findByFarmerId(UUID farmerId);
 
     boolean existsByFarmerIdAndStatusIn(UUID farmerId, List<String> statuses);

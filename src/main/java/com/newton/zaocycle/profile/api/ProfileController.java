@@ -3,7 +3,9 @@ package com.newton.zaocycle.profile.api;
 import com.newton.zaocycle.auth.domain.model.AuthenticatedPrincipal;
 import com.newton.zaocycle.profile.api.dto.ProfileImageResponse;
 import com.newton.zaocycle.profile.application.ProfileImageService;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,15 +21,16 @@ public class ProfileController {
     }
 
     @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ProfileImageResponse uploadImage(
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> uploadImage(
             @AuthenticationPrincipal AuthenticatedPrincipal principal,
             @RequestParam("file") MultipartFile file) {
         String url = profileImageService.upload(principal, file);
-        return new ProfileImageResponse(url);
+        return ResponseEntity.ok(ApiResponse.ok(new ProfileImageResponse(url)));
     }
 
     @GetMapping("/image")
-    public ProfileImageResponse getImage(@AuthenticationPrincipal AuthenticatedPrincipal principal) {
-        return new ProfileImageResponse(profileImageService.getImageUrl(principal));
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> getImage(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        return ResponseEntity.ok(ApiResponse.ok(new ProfileImageResponse(profileImageService.getImageUrl(principal))));
     }
 }

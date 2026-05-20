@@ -4,6 +4,8 @@ import com.newton.zaocycle.auth.domain.model.AuthenticatedPrincipal;
 import com.newton.zaocycle.collection.api.dto.FarmerEarningsResponse;
 import com.newton.zaocycle.collection.api.dto.WastePickupResponse;
 import com.newton.zaocycle.collection.application.PickupQueryService;
+import com.newton.zaocycle.shared.api.ApiResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,14 +24,18 @@ public class FarmerPickupController {
     }
 
     @GetMapping("/api/v1/farmer/pickups")
-    public List<WastePickupResponse> myPickups(@AuthenticationPrincipal AuthenticatedPrincipal principal) {
-        return pickupQueryService.findByFarmer(principal.id()).stream()
+    public ResponseEntity<ApiResponse<List<WastePickupResponse>>> myPickups(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        List<WastePickupResponse> body = pickupQueryService.findByFarmer(principal.id()).stream()
                 .map(WastePickupResponse::from)
                 .toList();
+        return ResponseEntity.ok(ApiResponse.ok(body));
     }
 
     @GetMapping("/api/v1/farmer/earnings")
-    public FarmerEarningsResponse earnings(@AuthenticationPrincipal AuthenticatedPrincipal principal) {
-        return FarmerEarningsResponse.from(pickupQueryService.getFarmerEarnings(principal.id()));
+    public ResponseEntity<ApiResponse<FarmerEarningsResponse>> earnings(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        return ResponseEntity.ok(ApiResponse.ok(
+                FarmerEarningsResponse.from(pickupQueryService.getFarmerEarnings(principal.id()))));
     }
 }

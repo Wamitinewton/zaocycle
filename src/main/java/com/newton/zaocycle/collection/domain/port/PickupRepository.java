@@ -20,6 +20,8 @@ public interface PickupRepository {
 
     List<WastePickup> findByRiderIdAndScheduledFor(UUID riderId, LocalDate date);
 
+    List<WastePickup> findByRiderId(UUID riderId);
+
     List<WastePickup> findByFarmerId(UUID farmerId);
 
     boolean existsByFarmerIdAndStatusIn(UUID farmerId, List<PickupStatus> statuses);

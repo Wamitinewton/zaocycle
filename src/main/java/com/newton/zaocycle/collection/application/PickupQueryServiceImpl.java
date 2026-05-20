@@ -30,6 +30,12 @@ class PickupQueryServiceImpl implements PickupQueryService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<WastePickup> findByRider(UUID riderId) {
+        return pickupRepo.findByRiderId(riderId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<WastePickup> findByFarmer(UUID farmerId) {
         return pickupRepo.findByFarmerId(farmerId);
     }

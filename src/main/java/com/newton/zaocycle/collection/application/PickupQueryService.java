@@ -11,6 +11,8 @@ import java.util.UUID;
 public interface PickupQueryService {
     List<WastePickup> findForRiderToday(UUID riderId);
 
+    List<WastePickup> findByRider(UUID riderId);
+
     List<WastePickup> findByFarmer(UUID farmerId);
 
     WastePickup findById(UUID id);

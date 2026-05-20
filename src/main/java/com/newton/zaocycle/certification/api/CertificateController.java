@@ -3,6 +3,7 @@ package com.newton.zaocycle.certification.api;
 import com.newton.zaocycle.certification.api.dto.CertificateResponse;
 import com.newton.zaocycle.certification.application.CertificateService;
 import com.newton.zaocycle.certification.domain.model.Certificate;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import com.newton.zaocycle.shared.exception.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,15 +23,15 @@ public class CertificateController {
     }
 
     @GetMapping("/{id}")
-    public CertificateResponse getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<CertificateResponse>> getById(@PathVariable UUID id) {
         Certificate cert = certService.findById(id)
                 .orElseThrow(() -> new NotFoundException("Certificate: " + id));
-        return CertificateResponse.from(cert);
+        return ResponseEntity.ok(ApiResponse.ok(CertificateResponse.from(cert)));
     }
 
     @PostMapping("/{id}/revoke")
-    public ResponseEntity<CertificateResponse> revoke(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<CertificateResponse>> revoke(@PathVariable UUID id) {
         Certificate cert = certService.revoke(id);
-        return ResponseEntity.ok(CertificateResponse.from(cert));
+        return ResponseEntity.ok(ApiResponse.ok(CertificateResponse.from(cert)));
     }
 }

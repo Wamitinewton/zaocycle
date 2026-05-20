@@ -4,8 +4,10 @@ import com.newton.zaocycle.inventory.api.dto.CreateBatchRequest;
 import com.newton.zaocycle.inventory.application.BatchService;
 import com.newton.zaocycle.inventory.application.command.CreateBatchCommand;
 import com.newton.zaocycle.inventory.domain.model.BriquetteBatch;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,21 +26,20 @@ public class BatchController {
     }
 
     @PostMapping("/batches")
-    @ResponseStatus(HttpStatus.CREATED)
-    public BriquetteBatch create(@Valid @RequestBody CreateBatchRequest request) {
+    public ResponseEntity<ApiResponse<BriquetteBatch>> create(@Valid @RequestBody CreateBatchRequest request) {
         CreateBatchCommand cmd = new CreateBatchCommand(
                 request.batchNumber(), request.kgProduced(),
                 request.producedAt(), request.sourceIntakeId());
-        return batchService.create(cmd);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(batchService.create(cmd)));
     }
 
     @GetMapping("/batches")
-    public List<BriquetteBatch> listAll() {
-        return batchService.findAll();
+    public ResponseEntity<ApiResponse<List<BriquetteBatch>>> listAll() {
+        return ResponseEntity.ok(ApiResponse.ok(batchService.findAll()));
     }
 
     @GetMapping("/stock")
-    public BigDecimal availableStock() {
-        return batchService.availableStock();
+    public ResponseEntity<ApiResponse<BigDecimal>> availableStock() {
+        return ResponseEntity.ok(ApiResponse.ok(batchService.availableStock()));
     }
 }

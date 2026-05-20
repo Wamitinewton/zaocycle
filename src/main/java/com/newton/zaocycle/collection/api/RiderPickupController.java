@@ -8,6 +8,8 @@ import com.newton.zaocycle.collection.application.command.CollectPickupCommand;
 import com.newton.zaocycle.collection.domain.model.WastePickup;
 import com.newton.zaocycle.farmer.application.FarmerService;
 import com.newton.zaocycle.farmer.domain.model.Farmer;
+import com.newton.zaocycle.shared.api.ApiResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -36,26 +38,37 @@ public class RiderPickupController {
     }
 
     @GetMapping("/today")
-    public List<RiderPickupDetailResponse> today(@AuthenticationPrincipal AuthenticatedPrincipal principal) {
-        return pickupQueryService.findForRiderToday(principal.id()).stream()
+    public ResponseEntity<ApiResponse<List<RiderPickupDetailResponse>>> today(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        List<RiderPickupDetailResponse> body = pickupQueryService.findForRiderToday(principal.id()).stream()
                 .map(this::enrich)
                 .toList();
+        return ResponseEntity.ok(ApiResponse.ok(body));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<List<RiderPickupDetailResponse>>> history(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        List<RiderPickupDetailResponse> body = pickupQueryService.findByRider(principal.id()).stream()
+                .map(this::enrich)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.ok(body));
     }
 
     @GetMapping("/{id}")
-    public RiderPickupDetailResponse getById(@PathVariable UUID id) {
-        return enrich(pickupQueryService.findById(id));
+    public ResponseEntity<ApiResponse<RiderPickupDetailResponse>> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(enrich(pickupQueryService.findById(id))));
     }
 
     @PostMapping("/{id}/collect")
-    public RiderPickupDetailResponse collect(
+    public ResponseEntity<ApiResponse<RiderPickupDetailResponse>> collect(
             @PathVariable UUID id,
             @RequestParam BigDecimal weightKg,
             @RequestParam(required = false) MultipartFile photo,
             @RequestParam(required = false) String notes) throws IOException {
         byte[] photoBytes = photo != null ? photo.getBytes() : null;
         CollectPickupCommand cmd = new CollectPickupCommand(weightKg, photoBytes, notes);
-        return enrich(pickupService.markCollected(id, cmd));
+        return ResponseEntity.ok(ApiResponse.ok(enrich(pickupService.markCollected(id, cmd))));
     }
 
     private RiderPickupDetailResponse enrich(WastePickup pickup) {

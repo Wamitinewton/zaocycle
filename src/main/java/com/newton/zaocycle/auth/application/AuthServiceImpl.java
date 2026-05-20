@@ -10,6 +10,7 @@ import com.newton.zaocycle.buyer.domain.model.Buyer;
 import com.newton.zaocycle.farmer.application.FarmerService;
 import com.newton.zaocycle.farmer.domain.model.Farmer;
 import com.newton.zaocycle.rider.application.RiderService;
+import com.newton.zaocycle.rider.domain.model.Rider;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
 import com.newton.zaocycle.shared.exception.ValidationException;
 import io.jsonwebtoken.Claims;
@@ -139,6 +140,13 @@ class AuthServiceImpl implements AuthService {
     public TokenResponse issueTokensForBuyer(Buyer buyer) {
         AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
                 buyer.id(), Role.BUYER, buyer.displayName(), buyer.phone(), buyer.email());
+        return buildTokenResponse(principal);
+    }
+
+    @Override
+    public TokenResponse issueTokensForRider(Rider rider) {
+        AuthenticatedPrincipal principal = new AuthenticatedPrincipal(
+                rider.id(), Role.RIDER, rider.fullName(), rider.phone().value(), null);
         return buildTokenResponse(principal);
     }
 

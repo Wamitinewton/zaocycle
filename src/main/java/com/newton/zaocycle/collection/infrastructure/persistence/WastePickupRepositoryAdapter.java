@@ -46,6 +46,13 @@ class WastePickupRepositoryAdapter implements PickupRepository {
     }
 
     @Override
+    public List<WastePickup> findByRiderId(UUID riderId) {
+        return jpa.findByRiderId(riderId).stream()
+                .map(WastePickupEntityMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<WastePickup> findByFarmerId(UUID farmerId) {
         return jpa.findByFarmerId(farmerId).stream()
                 .map(WastePickupEntityMapper::toDomain)

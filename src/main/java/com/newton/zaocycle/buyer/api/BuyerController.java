@@ -4,8 +4,10 @@ import com.newton.zaocycle.auth.domain.model.AuthenticatedPrincipal;
 import com.newton.zaocycle.buyer.api.dto.BuyerProfileResponse;
 import com.newton.zaocycle.buyer.api.dto.UpdateBuyerRequest;
 import com.newton.zaocycle.buyer.application.BuyerService;
+import com.newton.zaocycle.shared.api.ApiResponse;
 import com.newton.zaocycle.shared.exception.NotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +24,20 @@ public class BuyerController {
     }
 
     @GetMapping("/me")
-    public BuyerProfileResponse getProfile(@AuthenticationPrincipal AuthenticatedPrincipal principal) {
-        return buyerService.findById(principal.id())
+    public ResponseEntity<ApiResponse<BuyerProfileResponse>> getProfile(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        BuyerProfileResponse response = buyerService.findById(principal.id())
                 .map(BuyerProfileResponse::from)
                 .orElseThrow(() -> new NotFoundException("Buyer not found"));
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @PatchMapping("/me")
-    public BuyerProfileResponse updateProfile(@AuthenticationPrincipal AuthenticatedPrincipal principal,
-                                              @Valid @RequestBody UpdateBuyerRequest request) {
-        return BuyerProfileResponse.from(buyerService.updateProfile(principal.id(), request.toCommand()));
+    public ResponseEntity<ApiResponse<BuyerProfileResponse>> updateProfile(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal,
+            @Valid @RequestBody UpdateBuyerRequest request) {
+        BuyerProfileResponse response = BuyerProfileResponse.from(
+                buyerService.updateProfile(principal.id(), request.toCommand()));
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }

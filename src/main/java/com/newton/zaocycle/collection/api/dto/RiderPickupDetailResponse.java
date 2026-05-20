@@ -26,7 +26,8 @@ public record RiderPickupDetailResponse(
         Instant createdAt,
         Double pickupLatitude,
         Double pickupLongitude,
-        String pickupTradingCenter
+        String pickupTradingCenter,
+        String farmerPhone
 ) {
     public static RiderPickupDetailResponse from(WastePickup pickup, Farmer farmer) {
         return new RiderPickupDetailResponse(
@@ -46,7 +47,8 @@ public record RiderPickupDetailResponse(
                 pickup.createdAt(),
                 farmer != null ? farmer.latitude() : null,
                 farmer != null ? farmer.longitude() : null,
-                farmer != null ? farmer.tradingCenter() : null
+                farmer != null ? farmer.tradingCenter() : null,
+                farmer != null ? farmer.phone().value() : null
         );
     }
 }
