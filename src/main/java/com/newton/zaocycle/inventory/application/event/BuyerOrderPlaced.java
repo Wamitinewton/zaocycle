@@ -9,4 +9,5 @@ public record BuyerOrderPlaced(
         UUID productId,
         BigDecimal totalAmount,
         BigDecimal totalKg
-) {}
+) {
+}

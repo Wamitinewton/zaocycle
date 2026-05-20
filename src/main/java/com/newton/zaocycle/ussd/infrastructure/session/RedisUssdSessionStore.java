@@ -20,7 +20,7 @@ public class RedisUssdSessionStore implements UssdSessionStore {
     private final Duration ttl;
 
     public RedisUssdSessionStore(StringRedisTemplate redis, ObjectMapper mapper,
-            @Value("${zaocycle.ussd.session-ttl-minutes:5}") int ttlMinutes) {
+                                 @Value("${zaocycle.ussd.session-ttl-minutes:5}") int ttlMinutes) {
         this.redis = redis;
         this.mapper = mapper;
         this.ttl = Duration.ofMinutes(ttlMinutes);

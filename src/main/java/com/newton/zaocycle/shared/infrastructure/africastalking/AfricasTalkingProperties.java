@@ -9,4 +9,5 @@ public record AfricasTalkingProperties(
         String senderId,
         String baseUrl,
         String serviceCode
-) {}
+) {
+}

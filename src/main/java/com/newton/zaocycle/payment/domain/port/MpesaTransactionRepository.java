@@ -7,7 +7,10 @@ import java.util.UUID;
 
 public interface MpesaTransactionRepository {
     Optional<MpesaTransaction> findById(UUID id);
+
     Optional<MpesaTransaction> findByOriginatorConversationId(String originatorId);
+
     Optional<MpesaTransaction> findByConversationId(String conversationId);
+
     MpesaTransaction save(MpesaTransaction tx);
 }

@@ -11,4 +11,5 @@ public record PesticideApplicationLogged(
         UUID chemicalId,
         LocalDate safeHarvestDate,
         Instant appliedAt
-) {}
+) {
+}

@@ -8,7 +8,9 @@ public record StorageProperties(
         LocalFs localFs,
         Spaces spaces
 ) {
-    public record LocalFs(String basePath, String publicUrlPrefix) {}
+    public record LocalFs(String basePath, String publicUrlPrefix) {
+    }
 
-    public record Spaces(String endpoint, String region, String bucket, String accessKey, String secretKey) {}
+    public record Spaces(String endpoint, String region, String bucket, String accessKey, String secretKey) {
+    }
 }

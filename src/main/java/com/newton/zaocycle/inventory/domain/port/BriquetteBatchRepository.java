@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface BriquetteBatchRepository {
     BriquetteBatch save(BriquetteBatch batch);
+
     List<BriquetteBatch> findWithRemainingStockOrderedByOldest();
+
     BigDecimal sumRemaining();
 }

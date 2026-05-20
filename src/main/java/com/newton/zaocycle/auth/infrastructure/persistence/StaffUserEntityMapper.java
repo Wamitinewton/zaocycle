@@ -5,7 +5,8 @@ import com.newton.zaocycle.auth.domain.model.StaffUser;
 
 final class StaffUserEntityMapper {
 
-    private StaffUserEntityMapper() {}
+    private StaffUserEntityMapper() {
+    }
 
     static StaffUser toDomain(StaffUserEntity e) {
         StaffUser user = new StaffUser(

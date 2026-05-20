@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface BatchService {
     BriquetteBatch create(CreateBatchCommand cmd);
+
     List<BriquetteBatch> findAll();
+
     BigDecimal availableStock();
 }

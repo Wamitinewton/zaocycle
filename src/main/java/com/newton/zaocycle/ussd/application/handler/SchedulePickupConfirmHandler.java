@@ -44,8 +44,8 @@ public class SchedulePickupConfirmHandler implements MenuHandler {
         if (input == null || input.isBlank()) {
             return ResponseBuilder.cont(
                     "Confirm pickup for:\n" + app.crop() + "\n"
-                    + "Pickup tomorrow morning.\n\n"
-                    + "1. Confirm\n2. Cancel");
+                            + "Pickup tomorrow morning.\n\n"
+                            + "1. Confirm\n2. Cancel");
         }
 
         if ("1".equals(input)) {

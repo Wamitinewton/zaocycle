@@ -56,22 +56,53 @@ public class UssdSession {
         }
     }
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public MenuState getState() {
+        return state;
+    }
+
     // Used by application code and Jackson deserialization; updatedAt side-effect is harmless during deserialization
     public void setState(MenuState state) {
         this.state = state;
         this.updatedAt = Instant.now();
     }
 
-    public String getSessionId()        { return sessionId; }
-    public String getPhoneNumber()      { return phoneNumber; }
-    public MenuState getState()         { return state; }
-    public Map<String, Object> getData() { return data; }
-    public Instant getStartedAt()       { return startedAt; }
-    public Instant getUpdatedAt()       { return updatedAt; }
+    public Map<String, Object> getData() {
+        return data;
+    }
 
-    public void setSessionId(String sessionId)      { this.sessionId = sessionId; }
-    public void setPhoneNumber(String phoneNumber)  { this.phoneNumber = phoneNumber; }
-    public void setData(Map<String, Object> data)   { this.data = data; }
-    public void setStartedAt(Instant startedAt)     { this.startedAt = startedAt; }
-    public void setUpdatedAt(Instant updatedAt)     { this.updatedAt = updatedAt; }
+    public void setData(Map<String, Object> data) {
+        this.data = data;
+    }
+
+    public Instant getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(Instant startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

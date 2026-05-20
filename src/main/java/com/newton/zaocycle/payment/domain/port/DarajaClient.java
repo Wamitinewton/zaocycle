@@ -7,6 +7,8 @@ import com.newton.zaocycle.payment.infrastructure.daraja.dto.StkPushResponse;
 
 public interface DarajaClient {
     B2CResponse sendB2C(B2CRequest request);
+
     StkPushResponse stkPush(StkPushRequest request);
+
     String getToken();
 }

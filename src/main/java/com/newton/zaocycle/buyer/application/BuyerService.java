@@ -9,8 +9,12 @@ import java.util.UUID;
 
 public interface BuyerService {
     Buyer register(RegisterBuyerCommand cmd);
+
     Optional<Buyer> findById(UUID id);
+
     Optional<Buyer> findByEmail(String email);
+
     Buyer updateProfile(UUID id, UpdateBuyerCommand cmd);
+
     Buyer updateProfileImage(UUID id, String imageUrl);
 }

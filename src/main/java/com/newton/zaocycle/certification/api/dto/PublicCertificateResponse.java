@@ -15,7 +15,7 @@ public record PublicCertificateResponse(
         String ward
 ) {
     public static PublicCertificateResponse from(Certificate cert, PesticideApplication application,
-                                                  String chemicalName, String farmerName, String ward) {
+                                                 String chemicalName, String farmerName, String ward) {
         return new PublicCertificateResponse(
                 cert.token(),
                 cert.status().name(),

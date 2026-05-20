@@ -10,7 +10,10 @@ import java.util.UUID;
 
 public interface RiderRepository {
     Optional<Rider> findById(UUID id);
+
     Optional<Rider> findByPhone(PhoneNumber phone);
+
     List<Rider> findActiveByWard(Ward ward);
+
     Rider save(Rider rider);
 }

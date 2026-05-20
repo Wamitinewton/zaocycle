@@ -6,4 +6,5 @@ public record MeResponse(
         String displayName,
         String phone,
         String email
-) {}
+) {
+}

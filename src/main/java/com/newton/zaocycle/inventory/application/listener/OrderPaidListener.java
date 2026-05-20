@@ -25,7 +25,7 @@ public class OrderPaidListener {
     private final BriquetteBatchRepository batchRepository;
 
     public OrderPaidListener(BuyerOrderRepository orderRepository,
-                              BriquetteBatchRepository batchRepository) {
+                             BriquetteBatchRepository batchRepository) {
         this.orderRepository = orderRepository;
         this.batchRepository = batchRepository;
     }

@@ -1,3 +1,4 @@
 package com.newton.zaocycle.profile.api.dto;
 
-public record ProfileImageResponse(String imageUrl) {}
+public record ProfileImageResponse(String imageUrl) {
+}

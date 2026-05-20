@@ -47,12 +47,12 @@ public class MainMenuHandler implements MenuHandler {
             }
             default -> ResponseBuilder.cont(
                     """
-                    Invalid choice.
-                    1. Log pesticide spray
-                    2. Check safe harvest date
-                    3. Schedule waste pickup
-                    4. My earnings
-                    0. Exit""");
+                            Invalid choice.
+                            1. Log pesticide spray
+                            2. Check safe harvest date
+                            3. Schedule waste pickup
+                            4. My earnings
+                            0. Exit""");
         };
     }
 }

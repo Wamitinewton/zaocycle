@@ -6,7 +6,8 @@ import org.springframework.context.ApplicationContext;
 
 final class JobContextUtil {
 
-    private JobContextUtil() {}
+    private JobContextUtil() {
+    }
 
     static ApplicationContext applicationContext(JobExecutionContext ctx) {
         try {

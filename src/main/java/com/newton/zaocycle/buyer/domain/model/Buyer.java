@@ -9,16 +9,16 @@ public final class Buyer {
 
     private final UUID id;
     private final String email;
-    private String passwordHash;
     private final String phone;
     private final BuyerType buyerType;
+    private final Instant createdAt;
+    private String passwordHash;
     private String displayName;
     private String contactPerson;
     private String address;
     private String ward;
     private boolean active;
     private String profileImageUrl;
-    private final Instant createdAt;
     private Instant updatedAt;
 
     public Buyer(UUID id, String email, String passwordHash, String phone,
@@ -60,17 +60,55 @@ public final class Buyer {
         this.updatedAt = Instant.now();
     }
 
-    public UUID id()                  { return id; }
-    public String email()             { return email; }
-    public String passwordHash()      { return passwordHash; }
-    public String phone()             { return phone; }
-    public BuyerType buyerType()      { return buyerType; }
-    public String displayName()       { return displayName; }
-    public String contactPerson()     { return contactPerson; }
-    public String address()           { return address; }
-    public String ward()              { return ward; }
-    public boolean isActive()         { return active; }
-    public String profileImageUrl()   { return profileImageUrl; }
-    public Instant createdAt()        { return createdAt; }
-    public Instant updatedAt()        { return updatedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public String email() {
+        return email;
+    }
+
+    public String passwordHash() {
+        return passwordHash;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public BuyerType buyerType() {
+        return buyerType;
+    }
+
+    public String displayName() {
+        return displayName;
+    }
+
+    public String contactPerson() {
+        return contactPerson;
+    }
+
+    public String address() {
+        return address;
+    }
+
+    public String ward() {
+        return ward;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public String profileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

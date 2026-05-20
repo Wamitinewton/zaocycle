@@ -28,18 +28,22 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CertificateServiceImplTest {
 
-    @Mock private CertificateRepository repo;
-    @Mock private PesticideApplicationService pesticideService;
-    @Mock private TokenGenerator tokenGenerator;
-    @Mock private QrGenerator qrGenerator;
-    @Mock private CertificateImageStore imageStore;
-    @Mock private ApplicationEventPublisher events;
-
-    private CertificateServiceImpl service;
-
     private static final UUID APPLICATION_ID = UUID.randomUUID();
     private static final UUID FARMER_ID = UUID.randomUUID();
     private static final UUID CHEMICAL_ID = UUID.randomUUID();
+    @Mock
+    private CertificateRepository repo;
+    @Mock
+    private PesticideApplicationService pesticideService;
+    @Mock
+    private TokenGenerator tokenGenerator;
+    @Mock
+    private QrGenerator qrGenerator;
+    @Mock
+    private CertificateImageStore imageStore;
+    @Mock
+    private ApplicationEventPublisher events;
+    private CertificateServiceImpl service;
 
     @BeforeEach
     void setUp() {

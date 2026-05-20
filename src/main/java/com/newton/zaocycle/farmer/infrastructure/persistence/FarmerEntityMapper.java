@@ -6,7 +6,8 @@ import com.newton.zaocycle.shared.domain.Ward;
 
 final class FarmerEntityMapper {
 
-    private FarmerEntityMapper() {}
+    private FarmerEntityMapper() {
+    }
 
     static Farmer toDomain(FarmerEntity e) {
         Ward ward = (e.getWard() != null) ? Ward.valueOf(e.getWard()) : null;

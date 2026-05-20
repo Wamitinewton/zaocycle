@@ -7,4 +7,5 @@ public record LogPesticideApplicationCommand(
         UUID chemicalId,
         String crop,
         Double quantityMl
-) {}
+) {
+}

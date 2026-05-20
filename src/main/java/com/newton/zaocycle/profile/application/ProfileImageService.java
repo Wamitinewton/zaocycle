@@ -5,5 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProfileImageService {
     String upload(AuthenticatedPrincipal principal, MultipartFile file);
+
     String getImageUrl(AuthenticatedPrincipal principal);
 }

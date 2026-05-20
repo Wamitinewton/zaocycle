@@ -30,7 +30,7 @@ public class BuyerOrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse placeOrder(@Valid @RequestBody PlaceOrderRequest request,
-                                     @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+                                    @AuthenticationPrincipal AuthenticatedPrincipal principal) {
         PlaceOrderCommand cmd = new PlaceOrderCommand(
                 principal.id(), request.productId(), request.quantity(),
                 request.deliveryAddress(), request.deliveryPhone(),
@@ -40,19 +40,19 @@ public class BuyerOrderController {
 
     @GetMapping
     public Page<OrderResponse> myOrders(@AuthenticationPrincipal AuthenticatedPrincipal principal,
-                                         @PageableDefault(size = 20) Pageable pageable) {
+                                        @PageableDefault(size = 20) Pageable pageable) {
         return orderService.findForBuyer(principal.id(), pageable).map(OrderResponse::from);
     }
 
     @GetMapping("/{id}")
     public OrderResponse getOrder(@PathVariable UUID id,
-                                   @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+                                  @AuthenticationPrincipal AuthenticatedPrincipal principal) {
         return OrderResponse.from(orderService.findByIdAndBuyer(id, principal.id()));
     }
 
     @DeleteMapping("/{id}")
     public OrderResponse cancelOrder(@PathVariable UUID id,
-                                      @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+                                     @AuthenticationPrincipal AuthenticatedPrincipal principal) {
         return OrderResponse.from(orderService.cancelByBuyer(id, principal.id()));
     }
 }

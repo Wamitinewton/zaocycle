@@ -7,4 +7,5 @@ public record UpdateFarmerLocationCommand(
         String tradingCenter,
         Double latitude,
         Double longitude
-) {}
+) {
+}

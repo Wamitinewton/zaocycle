@@ -14,6 +14,7 @@ public final class MpesaTransaction {
     private final String partyA;
     private final String partyB;
     private final String originatorConversationId;
+    private final Instant createdAt;
     private String conversationId;
     private String mpesaReceiptNumber;
     private TransactionStatus status;
@@ -22,15 +23,14 @@ public final class MpesaTransaction {
     private String rawCallback;
     private UUID relatedPickupId;
     private UUID relatedOrderId;
-    private final Instant createdAt;
     private Instant updatedAt;
 
     public MpesaTransaction(UUID id, TransactionType transactionType, BigDecimal amount,
-                             String partyA, String partyB, String originatorConversationId,
-                             String conversationId, String mpesaReceiptNumber,
-                             TransactionStatus status, Integer resultCode, String resultDesc,
-                             String rawCallback, UUID relatedPickupId, UUID relatedOrderId,
-                             Instant createdAt, Instant updatedAt) {
+                            String partyA, String partyB, String originatorConversationId,
+                            String conversationId, String mpesaReceiptNumber,
+                            TransactionStatus status, Integer resultCode, String resultDesc,
+                            String rawCallback, UUID relatedPickupId, UUID relatedOrderId,
+                            Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.transactionType = transactionType;
         this.amount = amount;
@@ -50,8 +50,8 @@ public final class MpesaTransaction {
     }
 
     public static MpesaTransaction initiate(TransactionType type, BigDecimal amount,
-                                             String partyA, String partyB,
-                                             String originatorConversationId) {
+                                            String partyA, String partyB,
+                                            String originatorConversationId) {
         Instant now = Instant.now();
         return new MpesaTransaction(IdGenerator.generate(), type, amount, partyA, partyB,
                 originatorConversationId, null, null,
@@ -92,20 +92,67 @@ public final class MpesaTransaction {
         this.updatedAt = Instant.now();
     }
 
-    public UUID id()                          { return id; }
-    public TransactionType transactionType()  { return transactionType; }
-    public BigDecimal amount()                { return amount; }
-    public String partyA()                    { return partyA; }
-    public String partyB()                    { return partyB; }
-    public String originatorConversationId()  { return originatorConversationId; }
-    public String conversationId()            { return conversationId; }
-    public String mpesaReceiptNumber()        { return mpesaReceiptNumber; }
-    public TransactionStatus status()         { return status; }
-    public Integer resultCode()               { return resultCode; }
-    public String resultDesc()                { return resultDesc; }
-    public String rawCallback()               { return rawCallback; }
-    public UUID relatedPickupId()             { return relatedPickupId; }
-    public UUID relatedOrderId()              { return relatedOrderId; }
-    public Instant createdAt()                { return createdAt; }
-    public Instant updatedAt()                { return updatedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public TransactionType transactionType() {
+        return transactionType;
+    }
+
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    public String partyA() {
+        return partyA;
+    }
+
+    public String partyB() {
+        return partyB;
+    }
+
+    public String originatorConversationId() {
+        return originatorConversationId;
+    }
+
+    public String conversationId() {
+        return conversationId;
+    }
+
+    public String mpesaReceiptNumber() {
+        return mpesaReceiptNumber;
+    }
+
+    public TransactionStatus status() {
+        return status;
+    }
+
+    public Integer resultCode() {
+        return resultCode;
+    }
+
+    public String resultDesc() {
+        return resultDesc;
+    }
+
+    public String rawCallback() {
+        return rawCallback;
+    }
+
+    public UUID relatedPickupId() {
+        return relatedPickupId;
+    }
+
+    public UUID relatedOrderId() {
+        return relatedOrderId;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

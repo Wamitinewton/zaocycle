@@ -8,4 +8,5 @@ public record AuthenticatedPrincipal(
         String displayName,
         String phone,
         String email
-) {}
+) {
+}

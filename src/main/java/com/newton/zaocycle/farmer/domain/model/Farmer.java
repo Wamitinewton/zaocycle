@@ -11,6 +11,7 @@ public final class Farmer {
 
     private final UUID id;
     private final PhoneNumber phone;
+    private final Instant createdAt;
     private String fullName;
     private Ward ward;
     private String pinHash;
@@ -19,7 +20,6 @@ public final class Farmer {
     private Double latitude;
     private Double longitude;
     private String profileImageUrl;
-    private final Instant createdAt;
     private Instant updatedAt;
 
     public Farmer(UUID id, PhoneNumber phone, String fullName, Ward ward, String pinHash,
@@ -72,16 +72,51 @@ public final class Farmer {
         this.updatedAt = Instant.now();
     }
 
-    public UUID id()                        { return id; }
-    public PhoneNumber phone()              { return phone; }
-    public String fullName()                { return fullName; }
-    public Ward ward()                      { return ward; }
-    public String pinHash()                 { return pinHash; }
-    public boolean isRegistrationComplete() { return registrationComplete; }
-    public String tradingCenter()           { return tradingCenter; }
-    public Double latitude()                { return latitude; }
-    public Double longitude()               { return longitude; }
-    public String profileImageUrl()         { return profileImageUrl; }
-    public Instant createdAt()              { return createdAt; }
-    public Instant updatedAt()              { return updatedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public PhoneNumber phone() {
+        return phone;
+    }
+
+    public String fullName() {
+        return fullName;
+    }
+
+    public Ward ward() {
+        return ward;
+    }
+
+    public String pinHash() {
+        return pinHash;
+    }
+
+    public boolean isRegistrationComplete() {
+        return registrationComplete;
+    }
+
+    public String tradingCenter() {
+        return tradingCenter;
+    }
+
+    public Double latitude() {
+        return latitude;
+    }
+
+    public Double longitude() {
+        return longitude;
+    }
+
+    public String profileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

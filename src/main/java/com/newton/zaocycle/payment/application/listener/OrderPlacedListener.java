@@ -1,8 +1,8 @@
 package com.newton.zaocycle.payment.application.listener;
 
 import com.newton.zaocycle.buyer.application.BuyerService;
-import com.newton.zaocycle.inventory.application.event.BuyerOrderPlaced;
 import com.newton.zaocycle.buyer.domain.model.Buyer;
+import com.newton.zaocycle.inventory.application.event.BuyerOrderPlaced;
 import com.newton.zaocycle.payment.application.MpesaService;
 import com.newton.zaocycle.shared.exception.NotFoundException;
 import org.springframework.stereotype.Component;

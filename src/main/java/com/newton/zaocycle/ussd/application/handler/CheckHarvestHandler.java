@@ -26,6 +26,19 @@ public class CheckHarvestHandler implements MenuHandler {
         this.pesticideService = pesticideService;
     }
 
+    private static String truncate(String text, int max) {
+        if (text == null) return "";
+        return text.length() <= max ? text : text.substring(0, max);
+    }
+
+    private static String statusLabel(ApplicationStatus status) {
+        return switch (status) {
+            case SAFE -> "READY";
+            case PENDING -> "wait";
+            default -> "done";
+        };
+    }
+
     @Override
     public MenuState state() {
         return MenuState.CHECK_HARVEST;
@@ -46,9 +59,9 @@ public class CheckHarvestHandler implements MenuHandler {
         for (int i = 0; i < limit; i++) {
             PesticideApplication app = recent.get(i);
             sb.append(i + 1).append(". ")
-              .append(truncate(app.crop(), 10)).append(" ")
-              .append(SHORT_DATE.format(app.safeHarvestDate())).append(" ")
-              .append(statusLabel(app.status())).append("\n");
+                    .append(truncate(app.crop(), 10)).append(" ")
+                    .append(SHORT_DATE.format(app.safeHarvestDate())).append(" ")
+                    .append(statusLabel(app.status())).append("\n");
         }
         if (recent.size() > limit) {
             sb.append("(").append(recent.size() - limit).append(" more)\n");
@@ -56,18 +69,5 @@ public class CheckHarvestHandler implements MenuHandler {
 
         session.setState(MenuState.TERMINATED);
         return ResponseBuilder.end(sb.toString().trim());
-    }
-
-    private static String truncate(String text, int max) {
-        if (text == null) return "";
-        return text.length() <= max ? text : text.substring(0, max);
-    }
-
-    private static String statusLabel(ApplicationStatus status) {
-        return switch (status) {
-            case SAFE -> "READY";
-            case PENDING -> "wait";
-            default -> "done";
-        };
     }
 }

@@ -12,14 +12,14 @@ public final class BriquetteBatch {
     private final UUID id;
     private final String batchNumber;
     private final BigDecimal kgProduced;
-    private BigDecimal kgRemaining;
     private final Instant producedAt;
     private final UUID sourceIntakeId;
     private final Instant createdAt;
+    private BigDecimal kgRemaining;
 
     public BriquetteBatch(UUID id, String batchNumber, BigDecimal kgProduced,
-                           BigDecimal kgRemaining, Instant producedAt,
-                           UUID sourceIntakeId, Instant createdAt) {
+                          BigDecimal kgRemaining, Instant producedAt,
+                          UUID sourceIntakeId, Instant createdAt) {
         this.id = id;
         this.batchNumber = batchNumber;
         this.kgProduced = kgProduced;
@@ -30,7 +30,7 @@ public final class BriquetteBatch {
     }
 
     public static BriquetteBatch create(String batchNumber, BigDecimal kgProduced,
-                                         Instant producedAt, UUID sourceIntakeId) {
+                                        Instant producedAt, UUID sourceIntakeId) {
         return new BriquetteBatch(IdGenerator.generate(), batchNumber, kgProduced,
                 kgProduced, producedAt, sourceIntakeId, Instant.now());
     }
@@ -43,11 +43,31 @@ public final class BriquetteBatch {
         this.kgRemaining = this.kgRemaining.subtract(kg);
     }
 
-    public UUID id()                { return id; }
-    public String batchNumber()     { return batchNumber; }
-    public BigDecimal kgProduced()  { return kgProduced; }
-    public BigDecimal kgRemaining() { return kgRemaining; }
-    public Instant producedAt()     { return producedAt; }
-    public UUID sourceIntakeId()    { return sourceIntakeId; }
-    public Instant createdAt()      { return createdAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public String batchNumber() {
+        return batchNumber;
+    }
+
+    public BigDecimal kgProduced() {
+        return kgProduced;
+    }
+
+    public BigDecimal kgRemaining() {
+        return kgRemaining;
+    }
+
+    public Instant producedAt() {
+        return producedAt;
+    }
+
+    public UUID sourceIntakeId() {
+        return sourceIntakeId;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
 }

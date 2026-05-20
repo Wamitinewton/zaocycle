@@ -32,18 +32,18 @@ public class WelcomeHandler implements MenuHandler {
             session.setState(MenuState.MAIN_MENU);
             return ResponseBuilder.cont(
                     "Karibu, " + firstName(farmer.fullName()) + ".\n"
-                    + "1. Log pesticide spray\n"
-                    + "2. Check safe harvest date\n"
-                    + "3. Schedule waste pickup\n"
-                    + "4. My earnings\n"
-                    + "0. Exit");
+                            + "1. Log pesticide spray\n"
+                            + "2. Check safe harvest date\n"
+                            + "3. Schedule waste pickup\n"
+                            + "4. My earnings\n"
+                            + "0. Exit");
         }
 
         session.setState(MenuState.REGISTER_NAME);
         return ResponseBuilder.cont(
                 "Welcome to ZaoCycle.\n"
-                + "You are not yet registered.\n"
-                + "Enter your full name:");
+                        + "You are not yet registered.\n"
+                        + "Enter your full name:");
     }
 
     private String firstName(String fullName) {

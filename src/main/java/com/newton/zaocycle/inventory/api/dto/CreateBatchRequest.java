@@ -13,4 +13,5 @@ public record CreateBatchRequest(
         @NotNull @Positive BigDecimal kgProduced,
         @NotNull Instant producedAt,
         UUID sourceIntakeId
-) {}
+) {
+}

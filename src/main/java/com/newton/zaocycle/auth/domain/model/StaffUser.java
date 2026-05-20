@@ -13,9 +13,9 @@ public final class StaffUser {
     private final String passwordHash;
     private final String fullName;
     private final Role role;
+    private final Instant createdAt;
     private boolean active;
     private String profileImageUrl;
-    private final Instant createdAt;
     private Instant updatedAt;
 
     public StaffUser(UUID id, String email, String passwordHash, String fullName,
@@ -56,13 +56,39 @@ public final class StaffUser {
         this.updatedAt = Instant.now();
     }
 
-    public UUID id()                  { return id; }
-    public String email()             { return email; }
-    public String passwordHash()      { return passwordHash; }
-    public String fullName()          { return fullName; }
-    public Role role()                { return role; }
-    public boolean isActive()         { return active; }
-    public String profileImageUrl()   { return profileImageUrl; }
-    public Instant createdAt()        { return createdAt; }
-    public Instant updatedAt()        { return updatedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public String email() {
+        return email;
+    }
+
+    public String passwordHash() {
+        return passwordHash;
+    }
+
+    public String fullName() {
+        return fullName;
+    }
+
+    public Role role() {
+        return role;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public String profileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

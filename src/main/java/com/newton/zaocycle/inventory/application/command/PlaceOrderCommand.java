@@ -11,4 +11,5 @@ public record PlaceOrderCommand(
         String deliveryPhone,
         LocalDate requestedDelivery,
         String notes
-) {}
+) {
+}

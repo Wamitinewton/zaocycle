@@ -35,35 +35,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class AuthControllerTest {
 
+    private static final String TEST_PHONE = "+254700000099";
+    private static final String TEST_PIN = "5678";
+    private static final String LOGIN_URL = "/api/v1/auth/login";
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
-
     @Container
     @SuppressWarnings("resource")
     static GenericContainer<?> redis = new GenericContainer<>("redis:7-alpine")
             .withExposedPorts(6379);
+    @Autowired
+    WebApplicationContext context;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    FarmerService farmerService;
+    MockMvc mockMvc;
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.data.redis.host", redis::getHost);
         registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
     }
-
-    @Autowired
-    WebApplicationContext context;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    FarmerService farmerService;
-
-    MockMvc mockMvc;
-
-    private static final String TEST_PHONE = "+254700000099";
-    private static final String TEST_PIN   = "5678";
-    private static final String LOGIN_URL  = "/api/v1/auth/login";
 
     @BeforeEach
     void setUp() {

@@ -10,4 +10,5 @@ public record RequestPickupCommand(
         UUID applicationId,
         LocalDate scheduledFor,
         PickupSource source
-) {}
+) {
+}

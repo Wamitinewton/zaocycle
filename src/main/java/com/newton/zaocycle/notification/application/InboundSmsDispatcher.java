@@ -34,11 +34,11 @@ public class InboundSmsDispatcher {
     private final PesticideApplicationService pesticideService;
 
     public InboundSmsDispatcher(FarmerService farmerService,
-                                 NotificationService notifications,
-                                 InboundSmsRepository inboundRepo,
-                                 ApplicationEventPublisher eventPublisher,
-                                 PickupQueryService pickupQueryService,
-                                 PesticideApplicationService pesticideService) {
+                                NotificationService notifications,
+                                InboundSmsRepository inboundRepo,
+                                ApplicationEventPublisher eventPublisher,
+                                PickupQueryService pickupQueryService,
+                                PesticideApplicationService pesticideService) {
         this.farmerService = farmerService;
         this.notifications = notifications;
         this.inboundRepo = inboundRepo;
@@ -57,8 +57,8 @@ public class InboundSmsDispatcher {
 
         switch (command) {
             case "WASTE" -> handleWaste(phone, record);
-            case "BAL"   -> handleBalance(phone, record);
-            default      -> handleUnknown(phone, record);
+            case "BAL" -> handleBalance(phone, record);
+            default -> handleUnknown(phone, record);
         }
         inboundRepo.save(record);
     }
@@ -107,10 +107,10 @@ public class InboundSmsDispatcher {
         }
         FarmerEarnings earnings = pickupQueryService.getFarmerEarnings(farmer.get().id());
         String msg = String.format(
-            "ZaoCycle: Total KES %s | This month KES %s | %d pickups. Reply WASTE to schedule.",
-            earnings.total().stripTrailingZeros().toPlainString(),
-            earnings.thisMonth().stripTrailingZeros().toPlainString(),
-            earnings.pickupCount()
+                "ZaoCycle: Total KES %s | This month KES %s | %d pickups. Reply WASTE to schedule.",
+                earnings.total().stripTrailingZeros().toPlainString(),
+                earnings.thisMonth().stripTrailingZeros().toPlainString(),
+                earnings.pickupCount()
         );
         notifications.sendRaw(phone, msg);
         record.markProcessed();

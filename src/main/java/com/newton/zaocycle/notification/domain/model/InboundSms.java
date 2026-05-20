@@ -10,10 +10,10 @@ public final class InboundSms {
     private final UUID id;
     private final String phone;
     private final String body;
+    private final Instant receivedAt;
     private String commandParsed;
     private String status;
     private String errorMessage;
-    private final Instant receivedAt;
 
     public InboundSms(UUID id, String phone, String body, String commandParsed,
                       String status, String errorMessage, Instant receivedAt) {
@@ -43,11 +43,31 @@ public final class InboundSms {
         this.errorMessage = reason;
     }
 
-    public UUID id()                { return id; }
-    public String phone()           { return phone; }
-    public String body()            { return body; }
-    public String commandParsed()   { return commandParsed; }
-    public String status()          { return status; }
-    public String errorMessage()    { return errorMessage; }
-    public Instant receivedAt()     { return receivedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public String body() {
+        return body;
+    }
+
+    public String commandParsed() {
+        return commandParsed;
+    }
+
+    public String status() {
+        return status;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public Instant receivedAt() {
+        return receivedAt;
+    }
 }

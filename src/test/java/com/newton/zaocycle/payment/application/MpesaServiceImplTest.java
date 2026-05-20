@@ -31,9 +31,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MpesaServiceImplTest {
 
-    @Mock private MpesaTransactionRepository txRepo;
-    @Mock private DarajaClient darajaClient;
-    @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private MpesaTransactionRepository txRepo;
+    @Mock
+    private DarajaClient darajaClient;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     private MpesaServiceImpl service;
     private DarajaProperties props;

@@ -10,8 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TokenGeneratorTest {
 
-    private final TokenGenerator generator = new TokenGenerator();
     private static final Pattern TOKEN_PATTERN = Pattern.compile("^ZC-[A-Z2-9]{4}-[A-Z2-9]{4}$");
+    private final TokenGenerator generator = new TokenGenerator();
 
     @Test
     void generate_matchesExpectedFormat() {

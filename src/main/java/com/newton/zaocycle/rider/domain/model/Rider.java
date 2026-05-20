@@ -12,11 +12,11 @@ public final class Rider {
     private final UUID id;
     private final PhoneNumber phone;
     private final String fullName;
-    private String passwordHash;
     private final Ward assignedWard;
+    private final Instant createdAt;
+    private String passwordHash;
     private boolean active;
     private String profileImageUrl;
-    private final Instant createdAt;
     private Instant updatedAt;
 
     public Rider(UUID id, PhoneNumber phone, String fullName, String passwordHash,
@@ -51,13 +51,39 @@ public final class Rider {
         this.updatedAt = Instant.now();
     }
 
-    public UUID id()              { return id; }
-    public PhoneNumber phone()    { return phone; }
-    public String fullName()      { return fullName; }
-    public String passwordHash()  { return passwordHash; }
-    public Ward assignedWard()    { return assignedWard; }
-    public boolean isActive()     { return active; }
-    public String profileImageUrl() { return profileImageUrl; }
-    public Instant createdAt()    { return createdAt; }
-    public Instant updatedAt()    { return updatedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public PhoneNumber phone() {
+        return phone;
+    }
+
+    public String fullName() {
+        return fullName;
+    }
+
+    public String passwordHash() {
+        return passwordHash;
+    }
+
+    public Ward assignedWard() {
+        return assignedWard;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public String profileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

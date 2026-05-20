@@ -7,6 +7,8 @@ import java.util.UUID;
 
 public interface ProductService {
     List<BriquetteProduct> listActive();
+
     BriquetteProduct findById(UUID id);
+
     BriquetteProduct deactivate(UUID id);
 }

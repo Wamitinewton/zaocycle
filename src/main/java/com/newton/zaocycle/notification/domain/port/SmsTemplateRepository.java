@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface SmsTemplateRepository {
     Optional<SmsTemplate> findByCode(String code);
+
     List<SmsTemplate> findAll();
 }

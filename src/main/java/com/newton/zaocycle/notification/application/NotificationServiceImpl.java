@@ -21,8 +21,8 @@ class NotificationServiceImpl implements NotificationService {
     private final OutboundSmsRepository outboundRepo;
 
     NotificationServiceImpl(SmsTemplateService templateService,
-                             SmsGateway gateway,
-                             OutboundSmsRepository outboundRepo) {
+                            SmsGateway gateway,
+                            OutboundSmsRepository outboundRepo) {
         this.templateService = templateService;
         this.gateway = gateway;
         this.outboundRepo = outboundRepo;

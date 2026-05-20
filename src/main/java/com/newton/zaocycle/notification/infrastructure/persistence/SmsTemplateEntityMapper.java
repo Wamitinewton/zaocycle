@@ -4,7 +4,8 @@ import com.newton.zaocycle.notification.domain.model.SmsTemplate;
 
 class SmsTemplateEntityMapper {
 
-    private SmsTemplateEntityMapper() {}
+    private SmsTemplateEntityMapper() {
+    }
 
     static SmsTemplate toDomain(SmsTemplateEntity e) {
         return new SmsTemplate(e.getId(), e.getCode(), e.getBody(), e.getLanguage(), e.getCreatedAt());

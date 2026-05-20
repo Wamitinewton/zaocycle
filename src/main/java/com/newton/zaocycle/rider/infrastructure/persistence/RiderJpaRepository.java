@@ -8,5 +8,6 @@ import java.util.UUID;
 
 interface RiderJpaRepository extends JpaRepository<RiderEntity, UUID> {
     Optional<RiderEntity> findByPhone(String phone);
+
     List<RiderEntity> findByAssignedWardAndActiveTrueOrderByCreatedAtAsc(String ward);
 }

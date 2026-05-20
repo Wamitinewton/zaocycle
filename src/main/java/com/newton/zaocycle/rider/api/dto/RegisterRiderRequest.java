@@ -8,4 +8,5 @@ public record RegisterRiderRequest(
         @NotBlank String fullName,
         @NotBlank String ward,
         @NotBlank @Size(min = 6) String password
-) {}
+) {
+}

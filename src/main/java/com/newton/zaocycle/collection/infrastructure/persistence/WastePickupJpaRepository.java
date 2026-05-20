@@ -13,7 +13,7 @@ import java.util.UUID;
 
 interface WastePickupJpaRepository
         extends JpaRepository<WastePickupEntity, UUID>,
-                JpaSpecificationExecutor<WastePickupEntity> {
+        JpaSpecificationExecutor<WastePickupEntity> {
 
     List<WastePickupEntity> findByRiderIdAndScheduledFor(UUID riderId, LocalDate date);
 
@@ -22,15 +22,15 @@ interface WastePickupJpaRepository
     boolean existsByFarmerIdAndStatusIn(UUID farmerId, List<String> statuses);
 
     @Query("SELECT COALESCE(SUM(w.payoutAmount), 0) FROM WastePickupEntity w " +
-           "WHERE w.farmerId = :farmerId AND w.status = 'PAID'")
+            "WHERE w.farmerId = :farmerId AND w.status = 'PAID'")
     BigDecimal sumPayoutsByFarmer(@Param("farmerId") UUID farmerId);
 
     @Query("SELECT COALESCE(SUM(w.payoutAmount), 0) FROM WastePickupEntity w " +
-           "WHERE w.farmerId = :farmerId AND w.status = 'PAID' AND w.paidAt >= :since")
+            "WHERE w.farmerId = :farmerId AND w.status = 'PAID' AND w.paidAt >= :since")
     BigDecimal sumPayoutsByFarmerSince(@Param("farmerId") UUID farmerId, @Param("since") Instant since);
 
     @Query("SELECT COUNT(w) FROM WastePickupEntity w " +
-           "WHERE w.farmerId = :farmerId AND w.status = 'PAID'")
+            "WHERE w.farmerId = :farmerId AND w.status = 'PAID'")
     long countPaidByFarmer(@Param("farmerId") UUID farmerId);
 
     List<WastePickupEntity> findTop3ByFarmerIdAndStatusOrderByPaidAtDesc(UUID farmerId, String status);

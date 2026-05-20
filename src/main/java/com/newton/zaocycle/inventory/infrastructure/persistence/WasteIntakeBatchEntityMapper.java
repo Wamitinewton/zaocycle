@@ -12,7 +12,8 @@ final class WasteIntakeBatchEntityMapper {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private WasteIntakeBatchEntityMapper() {}
+    private WasteIntakeBatchEntityMapper() {
+    }
 
     static WasteIntakeBatch toDomain(WasteIntakeBatchEntity e) {
         return new WasteIntakeBatch(
@@ -35,7 +36,8 @@ final class WasteIntakeBatchEntityMapper {
 
     private static List<UUID> parsePickupIds(String json) {
         try {
-            return MAPPER.readValue(json, new TypeReference<>() {});
+            return MAPPER.readValue(json, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Failed to parse pickup_ids JSON: " + json, e);
         }

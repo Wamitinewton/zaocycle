@@ -12,4 +12,5 @@ public record OrderPaid(
         BigDecimal totalAmount,
         BigDecimal totalKg,
         LocalDate requestedDeliveryDate
-) {}
+) {
+}

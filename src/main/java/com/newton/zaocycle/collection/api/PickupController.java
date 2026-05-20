@@ -23,7 +23,7 @@ public class PickupController {
     private final PickupQueryService pickupQueryService;
 
     public PickupController(PickupService pickupService,
-                             PickupQueryService pickupQueryService) {
+                            PickupQueryService pickupQueryService) {
         this.pickupService = pickupService;
         this.pickupQueryService = pickupQueryService;
     }

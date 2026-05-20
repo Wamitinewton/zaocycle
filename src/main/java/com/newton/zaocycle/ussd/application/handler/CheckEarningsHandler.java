@@ -44,7 +44,7 @@ public class CheckEarningsHandler implements MenuHandler {
             sb.append("\nRecent:\n");
             for (PayoutEntry p : e.recentPayouts()) {
                 sb.append("KSh ").append(p.amount().toPlainString())
-                  .append(" - ").append(SHORT_DATE.format(p.date())).append("\n");
+                        .append(" - ").append(SHORT_DATE.format(p.date())).append("\n");
             }
         }
 

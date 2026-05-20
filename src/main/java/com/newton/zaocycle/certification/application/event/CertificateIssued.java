@@ -9,4 +9,5 @@ public record CertificateIssued(
         String crop,
         String token,
         String qrImageUrl
-) {}
+) {
+}

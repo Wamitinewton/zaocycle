@@ -6,7 +6,8 @@ import com.newton.zaocycle.payment.domain.model.TransactionType;
 
 final class MpesaTransactionEntityMapper {
 
-    private MpesaTransactionEntityMapper() {}
+    private MpesaTransactionEntityMapper() {
+    }
 
     static MpesaTransaction toDomain(MpesaTransactionEntity e) {
         return new MpesaTransaction(

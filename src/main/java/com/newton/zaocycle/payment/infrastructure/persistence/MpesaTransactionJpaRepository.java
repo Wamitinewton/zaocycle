@@ -7,5 +7,6 @@ import java.util.UUID;
 
 interface MpesaTransactionJpaRepository extends JpaRepository<MpesaTransactionEntity, UUID> {
     Optional<MpesaTransactionEntity> findByOriginatorConversationId(String originatorId);
+
     Optional<MpesaTransactionEntity> findByConversationId(String conversationId);
 }

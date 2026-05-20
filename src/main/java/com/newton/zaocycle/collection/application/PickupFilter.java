@@ -11,4 +11,5 @@ public record PickupFilter(
         UUID farmerId,
         LocalDate fromDate,
         LocalDate toDate
-) {}
+) {
+}

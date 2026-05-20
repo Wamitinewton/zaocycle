@@ -20,6 +20,15 @@ public class LogSprayCropHandler implements MenuHandler {
         this.chemicalHandler = chemicalHandler;
     }
 
+    public static String cropMenuText() {
+        StringBuilder sb = new StringBuilder("Select crop sprayed:\n");
+        for (int i = 0; i < CROPS.size(); i++) {
+            sb.append(i + 1).append(". ").append(CROPS.get(i)).append("\n");
+        }
+        sb.append("0. Back");
+        return sb.toString();
+    }
+
     @Override
     public MenuState state() {
         return MenuState.LOG_SPRAY_CROP;
@@ -45,15 +54,6 @@ public class LogSprayCropHandler implements MenuHandler {
         session.put("chemicalPage", "0");
         session.setState(MenuState.LOG_SPRAY_CHEMICAL);
         return chemicalHandler.handle(session, "");
-    }
-
-    public static String cropMenuText() {
-        StringBuilder sb = new StringBuilder("Select crop sprayed:\n");
-        for (int i = 0; i < CROPS.size(); i++) {
-            sb.append(i + 1).append(". ").append(CROPS.get(i)).append("\n");
-        }
-        sb.append("0. Back");
-        return sb.toString();
     }
 
     private int parseChoice(String input) {

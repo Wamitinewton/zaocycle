@@ -6,7 +6,8 @@ import com.newton.zaocycle.shared.domain.Ward;
 
 final class RiderEntityMapper {
 
-    private RiderEntityMapper() {}
+    private RiderEntityMapper() {
+    }
 
     static Rider toDomain(RiderEntity e) {
         Rider rider = new Rider(

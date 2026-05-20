@@ -7,5 +7,6 @@ public record TokenResponse(
         int expiresIn,
         UserSummary user
 ) {
-    public record UserSummary(String id, String role, String displayName) {}
+    public record UserSummary(String id, String role, String displayName) {
+    }
 }

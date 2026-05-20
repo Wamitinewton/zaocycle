@@ -7,4 +7,5 @@ import java.util.List;
 public record AtSmsMessageDataDto(
         @JsonProperty("Message") String message,
         @JsonProperty("Recipients") List<AtRecipientDto> recipients
-) {}
+) {
+}

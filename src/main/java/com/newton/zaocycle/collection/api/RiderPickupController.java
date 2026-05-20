@@ -28,8 +28,8 @@ public class RiderPickupController {
     private final FarmerService farmerService;
 
     public RiderPickupController(PickupService pickupService,
-                                  PickupQueryService pickupQueryService,
-                                  FarmerService farmerService) {
+                                 PickupQueryService pickupQueryService,
+                                 FarmerService farmerService) {
         this.pickupService = pickupService;
         this.pickupQueryService = pickupQueryService;
         this.farmerService = farmerService;

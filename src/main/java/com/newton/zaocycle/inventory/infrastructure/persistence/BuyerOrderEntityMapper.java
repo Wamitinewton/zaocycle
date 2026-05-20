@@ -5,7 +5,8 @@ import com.newton.zaocycle.inventory.domain.model.OrderStatus;
 
 final class BuyerOrderEntityMapper {
 
-    private BuyerOrderEntityMapper() {}
+    private BuyerOrderEntityMapper() {
+    }
 
     static BuyerOrder toDomain(BuyerOrderEntity e) {
         return new BuyerOrder(

@@ -7,7 +7,11 @@ public enum JobGroup {
 
     private final String value;
 
-    JobGroup(String value) { this.value = value; }
+    JobGroup(String value) {
+        this.value = value;
+    }
 
-    public String value() { return value; }
+    public String value() {
+        return value;
+    }
 }

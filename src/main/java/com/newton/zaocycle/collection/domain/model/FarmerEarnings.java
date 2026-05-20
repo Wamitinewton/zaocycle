@@ -8,4 +8,5 @@ public record FarmerEarnings(
         BigDecimal thisMonth,
         long pickupCount,
         List<PayoutEntry> recentPayouts
-) {}
+) {
+}

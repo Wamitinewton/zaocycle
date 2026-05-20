@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface ChemicalService {
     List<Chemical> listAllActive();
+
     List<ChemicalSummary> listForCrop(String crop);
+
     Chemical getById(UUID id);
 }

@@ -1,4 +1,5 @@
-CREATE TABLE riders (
+CREATE TABLE riders
+(
     id            UUID PRIMARY KEY,
     phone         VARCHAR(15)  NOT NULL UNIQUE,
     full_name     VARCHAR(255) NOT NULL,
@@ -9,5 +10,5 @@ CREATE TABLE riders (
     updated_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_riders_phone       ON riders(phone);
-CREATE INDEX idx_riders_ward_active ON riders(assigned_ward, active);
+CREATE INDEX idx_riders_phone ON riders (phone);
+CREATE INDEX idx_riders_ward_active ON riders (assigned_ward, active);

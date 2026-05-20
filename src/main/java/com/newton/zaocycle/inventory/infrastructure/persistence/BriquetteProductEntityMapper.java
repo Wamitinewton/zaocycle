@@ -4,7 +4,8 @@ import com.newton.zaocycle.inventory.domain.model.BriquetteProduct;
 
 final class BriquetteProductEntityMapper {
 
-    private BriquetteProductEntityMapper() {}
+    private BriquetteProductEntityMapper() {
+    }
 
     static BriquetteProduct toDomain(BriquetteProductEntity e) {
         return new BriquetteProduct(

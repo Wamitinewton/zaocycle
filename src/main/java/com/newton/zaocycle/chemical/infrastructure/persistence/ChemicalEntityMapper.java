@@ -4,7 +4,8 @@ import com.newton.zaocycle.chemical.domain.model.Chemical;
 
 final class ChemicalEntityMapper {
 
-    private ChemicalEntityMapper() {}
+    private ChemicalEntityMapper() {
+    }
 
     static Chemical toDomain(ChemicalEntity entity) {
         return new Chemical(

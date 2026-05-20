@@ -10,8 +10,12 @@ import java.util.UUID;
 
 public interface BuyerOrderRepository {
     Optional<BuyerOrder> findById(UUID id);
+
     Page<BuyerOrder> findByBuyerId(UUID buyerId, Pageable pageable);
+
     Page<BuyerOrder> findAll(Pageable pageable);
+
     Page<BuyerOrder> findByStatus(OrderStatus status, Pageable pageable);
+
     BuyerOrder save(BuyerOrder order);
 }

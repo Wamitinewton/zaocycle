@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface BriquetteProductRepository {
     List<BriquetteProduct> findAllActiveOrdered();
+
     Optional<BriquetteProduct> findById(UUID id);
+
     BriquetteProduct save(BriquetteProduct product);
 }

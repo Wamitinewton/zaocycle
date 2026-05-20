@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface ChemicalRepository {
     List<Chemical> findAllActive();
+
     List<Chemical> findActiveByCrop(String crop);
+
     Optional<Chemical> findById(UUID id);
 }

@@ -4,7 +4,8 @@ import org.quartz.JobDataMap;
 
 public final class JobDataMapHelper {
 
-    private JobDataMapHelper() {}
+    private JobDataMapHelper() {
+    }
 
     public static JobDataMap of(String k1, String v1) {
         JobDataMap m = new JobDataMap();

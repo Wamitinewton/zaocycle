@@ -12,10 +12,11 @@ public final class WastePickup {
 
     private final UUID id;
     private final UUID farmerId;
-    private UUID riderId;
     private final UUID applicationId;
     private final Instant requestedAt;
     private final LocalDate scheduledFor;
+    private final Instant createdAt;
+    private UUID riderId;
     private PickupStatus status;
     private BigDecimal weightKg;
     private String photoUrl;
@@ -24,7 +25,6 @@ public final class WastePickup {
     private UUID mpesaTransactionId;
     private Instant collectedAt;
     private Instant paidAt;
-    private final Instant createdAt;
     private Instant updatedAt;
 
     public WastePickup(UUID id, UUID farmerId, UUID riderId, UUID applicationId,
@@ -103,20 +103,67 @@ public final class WastePickup {
         this.updatedAt = Instant.now();
     }
 
-    public UUID id()                    { return id; }
-    public UUID farmerId()              { return farmerId; }
-    public UUID riderId()               { return riderId; }
-    public UUID applicationId()         { return applicationId; }
-    public Instant requestedAt()        { return requestedAt; }
-    public LocalDate scheduledFor()     { return scheduledFor; }
-    public PickupStatus status()        { return status; }
-    public BigDecimal weightKg()        { return weightKg; }
-    public String photoUrl()            { return photoUrl; }
-    public String notes()               { return notes; }
-    public BigDecimal payoutAmount()    { return payoutAmount; }
-    public UUID mpesaTransactionId()    { return mpesaTransactionId; }
-    public Instant collectedAt()        { return collectedAt; }
-    public Instant paidAt()             { return paidAt; }
-    public Instant createdAt()          { return createdAt; }
-    public Instant updatedAt()          { return updatedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public UUID farmerId() {
+        return farmerId;
+    }
+
+    public UUID riderId() {
+        return riderId;
+    }
+
+    public UUID applicationId() {
+        return applicationId;
+    }
+
+    public Instant requestedAt() {
+        return requestedAt;
+    }
+
+    public LocalDate scheduledFor() {
+        return scheduledFor;
+    }
+
+    public PickupStatus status() {
+        return status;
+    }
+
+    public BigDecimal weightKg() {
+        return weightKg;
+    }
+
+    public String photoUrl() {
+        return photoUrl;
+    }
+
+    public String notes() {
+        return notes;
+    }
+
+    public BigDecimal payoutAmount() {
+        return payoutAmount;
+    }
+
+    public UUID mpesaTransactionId() {
+        return mpesaTransactionId;
+    }
+
+    public Instant collectedAt() {
+        return collectedAt;
+    }
+
+    public Instant paidAt() {
+        return paidAt;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

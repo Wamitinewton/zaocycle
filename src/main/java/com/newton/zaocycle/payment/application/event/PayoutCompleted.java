@@ -10,4 +10,5 @@ public record PayoutCompleted(
         String farmerPhone,
         String mpesaReceiptNumber,
         BigDecimal weightKg
-) {}
+) {
+}

@@ -24,7 +24,7 @@ public class StaffOrderController {
 
     @GetMapping
     public Page<OrderResponse> listAll(@RequestParam(required = false) OrderStatus status,
-                                        @PageableDefault(size = 20) Pageable pageable) {
+                                       @PageableDefault(size = 20) Pageable pageable) {
         return orderService.findAll(status, pageable).map(OrderResponse::from);
     }
 

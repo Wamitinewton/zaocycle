@@ -11,9 +11,14 @@ import java.util.UUID;
 
 public interface RiderService {
     Rider register(RegisterRiderCommand cmd);
+
     Optional<Rider> findById(UUID id);
+
     Optional<Rider> findByPhone(PhoneNumber phone);
+
     List<Rider> findActiveInWard(Ward ward);
+
     Rider deactivate(UUID id);
+
     Rider updateProfileImage(UUID id, String imageUrl);
 }

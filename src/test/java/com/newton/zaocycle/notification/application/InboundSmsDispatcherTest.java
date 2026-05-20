@@ -37,19 +37,23 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class InboundSmsDispatcherTest {
 
-    @Mock private FarmerService farmerService;
-    @Mock private NotificationService notifications;
-    @Mock private InboundSmsRepository inboundRepo;
-    @Mock private ApplicationEventPublisher eventPublisher;
-    @Mock private PickupQueryService pickupQueryService;
-    @Mock private PesticideApplicationService pesticideService;
-
-    @InjectMocks
-    private InboundSmsDispatcher dispatcher;
-
     private static final String PHONE = "+254700000001";
     private static final UUID FARMER_ID = UUID.randomUUID();
     private static final UUID APP_ID = UUID.randomUUID();
+    @Mock
+    private FarmerService farmerService;
+    @Mock
+    private NotificationService notifications;
+    @Mock
+    private InboundSmsRepository inboundRepo;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private PickupQueryService pickupQueryService;
+    @Mock
+    private PesticideApplicationService pesticideService;
+    @InjectMocks
+    private InboundSmsDispatcher dispatcher;
 
     private PesticideApplication safeApp() {
         return new PesticideApplication(APP_ID, FARMER_ID, UUID.randomUUID(), "Maize",

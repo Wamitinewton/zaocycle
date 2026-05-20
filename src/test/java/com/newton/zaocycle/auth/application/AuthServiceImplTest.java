@@ -33,17 +33,21 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplTest {
 
-    @Mock private FarmerService farmerService;
-    @Mock private RiderService riderService;
-    @Mock private BuyerService buyerService;
-    @Mock private StaffUserRepository staffUserRepository;
-    @Mock private JwtService jwtService;
-    @Mock private PasswordEncoder passwordEncoder;
-
-    private AuthServiceImpl authService;
-
     private static final JwtProperties JWT_PROPS =
             new JwtProperties("test-secret-must-be-at-least-32-chars!!", 15, 30);
+    @Mock
+    private FarmerService farmerService;
+    @Mock
+    private RiderService riderService;
+    @Mock
+    private BuyerService buyerService;
+    @Mock
+    private StaffUserRepository staffUserRepository;
+    @Mock
+    private JwtService jwtService;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    private AuthServiceImpl authService;
 
     @BeforeEach
     void setUp() {

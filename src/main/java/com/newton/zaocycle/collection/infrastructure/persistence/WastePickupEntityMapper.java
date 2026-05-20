@@ -5,7 +5,8 @@ import com.newton.zaocycle.collection.domain.model.WastePickup;
 
 final class WastePickupEntityMapper {
 
-    private WastePickupEntityMapper() {}
+    private WastePickupEntityMapper() {
+    }
 
     static WastePickup toDomain(WastePickupEntity e) {
         return new WastePickup(

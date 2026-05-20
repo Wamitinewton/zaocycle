@@ -7,5 +7,6 @@ import java.util.UUID;
 
 interface CertificateJpaRepository extends JpaRepository<CertificateEntity, UUID> {
     Optional<CertificateEntity> findByToken(String token);
+
     Optional<CertificateEntity> findByApplicationId(UUID applicationId);
 }

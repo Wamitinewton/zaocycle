@@ -9,4 +9,5 @@ public record WasteCollected(
         UUID riderId,
         BigDecimal weightKg,
         BigDecimal payoutAmount
-) {}
+) {
+}

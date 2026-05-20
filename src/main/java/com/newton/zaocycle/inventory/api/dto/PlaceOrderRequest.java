@@ -14,4 +14,5 @@ public record PlaceOrderRequest(
         @NotBlank String deliveryPhone,
         LocalDate requestedDelivery,
         String notes
-) {}
+) {
+}

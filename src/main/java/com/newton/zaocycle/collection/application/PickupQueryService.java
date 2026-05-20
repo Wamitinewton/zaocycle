@@ -10,9 +10,14 @@ import java.util.UUID;
 
 public interface PickupQueryService {
     List<WastePickup> findForRiderToday(UUID riderId);
+
     List<WastePickup> findByFarmer(UUID farmerId);
+
     WastePickup findById(UUID id);
+
     FarmerEarnings getFarmerEarnings(UUID farmerId);
+
     boolean hasOpenPickup(UUID farmerId);
+
     Page<WastePickup> search(PickupFilter filter, Pageable pageable);
 }

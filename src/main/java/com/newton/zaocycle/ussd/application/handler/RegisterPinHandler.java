@@ -35,8 +35,8 @@ public class RegisterPinHandler implements MenuHandler {
             return ResponseBuilder.cont("PIN must be exactly 4 digits.\nSet a 4-digit PIN:");
         }
 
-        String fullName    = session.getString("fullName");
-        String wardName    = session.getString("ward");
+        String fullName = session.getString("fullName");
+        String wardName = session.getString("ward");
 
         if (fullName == null || wardName == null) {
             log.warn("Registration session missing data for phone={}", session.getPhoneNumber());
@@ -51,8 +51,8 @@ public class RegisterPinHandler implements MenuHandler {
         }
 
         String tradingCenter = session.getString("tradingCenter");
-        Double latitude      = parseDouble(session.getString("latitude"));
-        Double longitude     = parseDouble(session.getString("longitude"));
+        Double latitude = parseDouble(session.getString("latitude"));
+        Double longitude = parseDouble(session.getString("longitude"));
 
         // PIN is passed directly to FarmerService; it is hashed there and never stored in the session
         RegisterFarmerCommand command = new RegisterFarmerCommand(
@@ -70,7 +70,7 @@ public class RegisterPinHandler implements MenuHandler {
             session.setState(MenuState.TERMINATED);
             return ResponseBuilder.end(
                     "Welcome to ZaoCycle, " + firstName(farmer.fullName()) + ".\n"
-                    + "Dial this shortcode again to log sprays.");
+                            + "Dial this shortcode again to log sprays.");
         } catch (Exception e) {
             log.error("Registration failed for phone={}", session.getPhoneNumber(), e);
             return ResponseBuilder.end("Registration failed. Please try again.");

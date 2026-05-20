@@ -10,8 +10,13 @@ class StubHandlers {
 
     @Component
     static class TerminatedHandler implements MenuHandler {
-        @Override public MenuState state() { return MenuState.TERMINATED; }
-        @Override public MenuResponse handle(UssdSession session, String input) {
+        @Override
+        public MenuState state() {
+            return MenuState.TERMINATED;
+        }
+
+        @Override
+        public MenuResponse handle(UssdSession session, String input) {
             return ResponseBuilder.end("Session ended. Please dial again.");
         }
     }

@@ -7,5 +7,6 @@ import java.util.UUID;
 
 interface BuyerJpaRepository extends JpaRepository<BuyerEntity, UUID> {
     Optional<BuyerEntity> findByEmail(String email);
+
     boolean existsByEmail(String email);
 }

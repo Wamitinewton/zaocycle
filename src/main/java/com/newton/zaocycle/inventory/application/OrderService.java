@@ -10,10 +10,16 @@ import java.util.UUID;
 
 public interface OrderService {
     BuyerOrder placeOrder(PlaceOrderCommand cmd);
+
     BuyerOrder findByIdAndBuyer(UUID orderId, UUID buyerId);
+
     Page<BuyerOrder> findForBuyer(UUID buyerId, Pageable pageable);
+
     BuyerOrder cancelByBuyer(UUID orderId, UUID buyerId);
+
     BuyerOrder markReadyForDelivery(UUID orderId);
+
     BuyerOrder markDelivered(UUID orderId);
+
     Page<BuyerOrder> findAll(OrderStatus status, Pageable pageable);
 }

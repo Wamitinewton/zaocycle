@@ -11,11 +11,11 @@ public final class OutboundSms {
     private final String phone;
     private final String templateCode;
     private final String body;
+    private final Instant createdAt;
     private String status;
     private String providerMessageId;
     private String errorMessage;
     private Instant sentAt;
-    private final Instant createdAt;
 
     public OutboundSms(UUID id, String phone, String templateCode, String body,
                        String status, String providerMessageId, String errorMessage,
@@ -48,13 +48,39 @@ public final class OutboundSms {
         this.errorMessage = errorMessage;
     }
 
-    public UUID id()                    { return id; }
-    public String phone()               { return phone; }
-    public String templateCode()        { return templateCode; }
-    public String body()                { return body; }
-    public String status()              { return status; }
-    public String providerMessageId()   { return providerMessageId; }
-    public String errorMessage()        { return errorMessage; }
-    public Instant sentAt()             { return sentAt; }
-    public Instant createdAt()          { return createdAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public String templateCode() {
+        return templateCode;
+    }
+
+    public String body() {
+        return body;
+    }
+
+    public String status() {
+        return status;
+    }
+
+    public String providerMessageId() {
+        return providerMessageId;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public Instant sentAt() {
+        return sentAt;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
 }

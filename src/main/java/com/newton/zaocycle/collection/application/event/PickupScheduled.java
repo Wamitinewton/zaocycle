@@ -13,4 +13,5 @@ public record PickupScheduled(
         String farmerName,
         String riderName,
         String ward
-) {}
+) {
+}

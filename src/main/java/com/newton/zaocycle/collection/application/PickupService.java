@@ -8,10 +8,16 @@ import java.util.UUID;
 
 public interface PickupService {
     WastePickup requestPickup(RequestPickupCommand cmd);
+
     WastePickup assignRider(UUID pickupId, UUID riderId);
+
     WastePickup autoAssign(UUID pickupId);
+
     WastePickup markCollected(UUID pickupId, CollectPickupCommand cmd);
+
     WastePickup markPaid(UUID pickupId, UUID mpesaTxId);
+
     void reassignExpired(UUID pickupId);
+
     void cancel(UUID pickupId);
 }

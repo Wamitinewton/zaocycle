@@ -19,9 +19,23 @@ public final class SmsTemplate {
         this.createdAt = createdAt;
     }
 
-    public UUID id()         { return id; }
-    public String code()     { return code; }
-    public String body()     { return body; }
-    public String language() { return language; }
-    public Instant createdAt() { return createdAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public String code() {
+        return code;
+    }
+
+    public String body() {
+        return body;
+    }
+
+    public String language() {
+        return language;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
 }

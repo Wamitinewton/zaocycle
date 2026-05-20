@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface FarmerRepository {
     Optional<Farmer> findByPhone(PhoneNumber phone);
+
     Optional<Farmer> findById(UUID id);
+
     Farmer save(Farmer farmer);
 }

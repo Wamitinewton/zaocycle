@@ -25,12 +25,35 @@ public final class Chemical {
         this.active = active;
     }
 
-    public UUID id()                  { return id; }
-    public String name()              { return name; }
-    public String activeIngredient()  { return activeIngredient; }
-    public ChemicalCategory category(){ return category; }
-    public int halfLifeDays()         { return halfLifeDays; }
-    public int phiDays()              { return phiDays; }
-    public String commonCrops()       { return commonCrops; }
-    public boolean active()           { return active; }
+    public UUID id() {
+        return id;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public String activeIngredient() {
+        return activeIngredient;
+    }
+
+    public ChemicalCategory category() {
+        return category;
+    }
+
+    public int halfLifeDays() {
+        return halfLifeDays;
+    }
+
+    public int phiDays() {
+        return phiDays;
+    }
+
+    public String commonCrops() {
+        return commonCrops;
+    }
+
+    public boolean active() {
+        return active;
+    }
 }

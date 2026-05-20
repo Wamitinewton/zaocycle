@@ -15,4 +15,5 @@ public record DarajaProperties(
         String b2cTimeoutUrl,
         String stkPasskey,
         String stkCallbackUrl
-) {}
+) {
+}

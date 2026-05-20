@@ -7,7 +7,8 @@ import java.math.BigDecimal;
 
 final class PesticideApplicationEntityMapper {
 
-    private PesticideApplicationEntityMapper() {}
+    private PesticideApplicationEntityMapper() {
+    }
 
     static PesticideApplication toDomain(PesticideApplicationEntity e) {
         Double qty = (e.getQuantityMl() != null) ? e.getQuantityMl().doubleValue() : null;

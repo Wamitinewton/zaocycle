@@ -11,10 +11,16 @@ import java.util.UUID;
 
 public interface FarmerService {
     Optional<Farmer> findByPhone(PhoneNumber phone);
+
     Optional<Farmer> findById(UUID id);
+
     Farmer findOrCreateByPhone(PhoneNumber phone);
+
     Farmer register(RegisterFarmerCommand command);
+
     FarmerSummary getSummary(PhoneNumber phone);
+
     Farmer updateProfileImage(UUID id, String imageUrl);
+
     Farmer updateLocation(UpdateFarmerLocationCommand command);
 }

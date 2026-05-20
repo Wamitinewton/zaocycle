@@ -9,9 +9,14 @@ import java.util.UUID;
 
 public interface StaffService {
     StaffUser create(CreateStaffCommand cmd);
+
     List<StaffUser> findAll();
+
     Optional<StaffUser> findById(UUID id);
+
     StaffUser deactivate(UUID id);
+
     StaffUser reactivate(UUID id);
+
     StaffUser updateProfileImage(UUID id, String imageUrl);
 }

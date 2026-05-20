@@ -27,7 +27,7 @@ public class IntakeController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public WasteIntakeBatch record(@Valid @RequestBody RecordIntakeRequest request,
-                                    @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+                                   @AuthenticationPrincipal AuthenticatedPrincipal principal) {
         RecordIntakeCommand cmd = new RecordIntakeCommand(
                 request.intakeDate(), request.totalKg(),
                 request.pickupIds(), request.notes(), principal.id());

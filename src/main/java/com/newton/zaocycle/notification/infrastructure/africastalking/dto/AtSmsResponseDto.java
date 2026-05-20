@@ -4,4 +4,5 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record AtSmsResponseDto(
         @JsonProperty("SMSMessageData") AtSmsMessageDataDto smsMessageData
-) {}
+) {
+}

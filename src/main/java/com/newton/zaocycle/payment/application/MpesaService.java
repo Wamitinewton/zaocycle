@@ -10,8 +10,12 @@ import java.util.UUID;
 
 public interface MpesaService {
     MpesaTransaction initiateB2C(UUID pickupId, String phone, BigDecimal amount);
+
     MpesaTransaction initiateStkPush(UUID orderId, String phone, BigDecimal amount, String reference);
+
     void handleB2CResult(B2CResultCallback callback);
+
     void handleB2CTimeout(Map<String, Object> body);
+
     void handleStkPushCallback(StkPushCallback callback);
 }

@@ -8,4 +8,5 @@ public record WastePickupRequested(
         UUID farmerId,
         UUID applicationId,
         PickupSource source
-) {}
+) {
+}

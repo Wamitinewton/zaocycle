@@ -9,4 +9,5 @@ public record RegisterFarmerRequest(
         @NotBlank @Size(max = 255) String fullName,
         @NotBlank String ward,
         @NotBlank @Size(min = 4, max = 4) String pin
-) {}
+) {
+}

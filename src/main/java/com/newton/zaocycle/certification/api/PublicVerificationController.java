@@ -10,7 +10,10 @@ import com.newton.zaocycle.pesticide.application.PesticideApplicationService;
 import com.newton.zaocycle.pesticide.domain.model.PesticideApplication;
 import com.newton.zaocycle.shared.exception.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/certificates")
@@ -22,9 +25,9 @@ public class PublicVerificationController {
     private final FarmerService farmerService;
 
     public PublicVerificationController(CertificateService certService,
-                                         PesticideApplicationService pesticideService,
-                                         ChemicalService chemicalService,
-                                         FarmerService farmerService) {
+                                        PesticideApplicationService pesticideService,
+                                        ChemicalService chemicalService,
+                                        FarmerService farmerService) {
         this.certService = certService;
         this.pesticideService = pesticideService;
         this.chemicalService = chemicalService;

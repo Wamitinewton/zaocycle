@@ -11,4 +11,5 @@ public record RegisterFarmerCommand(
         String tradingCenter,
         Double latitude,
         Double longitude
-) {}
+) {
+}

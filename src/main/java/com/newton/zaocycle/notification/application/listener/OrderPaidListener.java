@@ -17,8 +17,8 @@ public class OrderPaidListener {
     private final String opsPhone;
 
     public OrderPaidListener(NotificationService notifications,
-                              BuyerService buyerService,
-                              @Value("${zaocycle.notification.ops-phone}") String opsPhone) {
+                             BuyerService buyerService,
+                             @Value("${zaocycle.notification.ops-phone}") String opsPhone) {
         this.notifications = notifications;
         this.buyerService = buyerService;
         this.opsPhone = opsPhone;

@@ -5,7 +5,8 @@ import com.newton.zaocycle.certification.domain.model.CertificateStatus;
 
 class CertificateEntityMapper {
 
-    private CertificateEntityMapper() {}
+    private CertificateEntityMapper() {
+    }
 
     static Certificate toDomain(CertificateEntity e) {
         return new Certificate(

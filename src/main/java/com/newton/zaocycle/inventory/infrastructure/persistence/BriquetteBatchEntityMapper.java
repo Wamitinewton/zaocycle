@@ -4,7 +4,8 @@ import com.newton.zaocycle.inventory.domain.model.BriquetteBatch;
 
 final class BriquetteBatchEntityMapper {
 
-    private BriquetteBatchEntityMapper() {}
+    private BriquetteBatchEntityMapper() {
+    }
 
     static BriquetteBatch toDomain(BriquetteBatchEntity e) {
         return new BriquetteBatch(

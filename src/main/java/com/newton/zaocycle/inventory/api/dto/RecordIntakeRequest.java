@@ -13,4 +13,5 @@ public record RecordIntakeRequest(
         @NotNull @Positive BigDecimal totalKg,
         @NotNull List<UUID> pickupIds,
         String notes
-) {}
+) {
+}

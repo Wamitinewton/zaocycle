@@ -20,18 +20,18 @@ public final class BuyerOrder {
     private final String deliveryAddress;
     private final String deliveryPhone;
     private final LocalDate requestedDelivery;
+    private final String notes;
+    private final Instant createdAt;
     private Instant deliveredAt;
     private OrderStatus status;
     private UUID mpesaTransactionId;
-    private final String notes;
-    private final Instant createdAt;
     private Instant updatedAt;
 
     public BuyerOrder(UUID id, UUID buyerId, UUID productId, int quantity,
-                       BigDecimal unitPrice, BigDecimal totalKg, BigDecimal totalAmount,
-                       String deliveryAddress, String deliveryPhone, LocalDate requestedDelivery,
-                       Instant deliveredAt, OrderStatus status, UUID mpesaTransactionId,
-                       String notes, Instant createdAt, Instant updatedAt) {
+                      BigDecimal unitPrice, BigDecimal totalKg, BigDecimal totalAmount,
+                      String deliveryAddress, String deliveryPhone, LocalDate requestedDelivery,
+                      Instant deliveredAt, OrderStatus status, UUID mpesaTransactionId,
+                      String notes, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.buyerId = buyerId;
         this.productId = productId;
@@ -51,9 +51,9 @@ public final class BuyerOrder {
     }
 
     public static BuyerOrder create(UUID buyerId, UUID productId, int quantity,
-                                     BigDecimal unitPrice, BigDecimal totalKg, BigDecimal totalAmount,
-                                     String deliveryAddress, String deliveryPhone,
-                                     LocalDate requestedDelivery, String notes) {
+                                    BigDecimal unitPrice, BigDecimal totalKg, BigDecimal totalAmount,
+                                    String deliveryAddress, String deliveryPhone,
+                                    LocalDate requestedDelivery, String notes) {
         Instant now = Instant.now();
         return new BuyerOrder(IdGenerator.generate(), buyerId, productId, quantity,
                 unitPrice, totalKg, totalAmount, deliveryAddress, deliveryPhone,
@@ -94,20 +94,67 @@ public final class BuyerOrder {
         }
     }
 
-    public UUID id()                     { return id; }
-    public UUID buyerId()                { return buyerId; }
-    public UUID productId()              { return productId; }
-    public int quantity()                { return quantity; }
-    public BigDecimal unitPrice()        { return unitPrice; }
-    public BigDecimal totalKg()          { return totalKg; }
-    public BigDecimal totalAmount()      { return totalAmount; }
-    public String deliveryAddress()      { return deliveryAddress; }
-    public String deliveryPhone()        { return deliveryPhone; }
-    public LocalDate requestedDelivery() { return requestedDelivery; }
-    public Instant deliveredAt()         { return deliveredAt; }
-    public OrderStatus status()          { return status; }
-    public UUID mpesaTransactionId()     { return mpesaTransactionId; }
-    public String notes()                { return notes; }
-    public Instant createdAt()           { return createdAt; }
-    public Instant updatedAt()           { return updatedAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public UUID buyerId() {
+        return buyerId;
+    }
+
+    public UUID productId() {
+        return productId;
+    }
+
+    public int quantity() {
+        return quantity;
+    }
+
+    public BigDecimal unitPrice() {
+        return unitPrice;
+    }
+
+    public BigDecimal totalKg() {
+        return totalKg;
+    }
+
+    public BigDecimal totalAmount() {
+        return totalAmount;
+    }
+
+    public String deliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public String deliveryPhone() {
+        return deliveryPhone;
+    }
+
+    public LocalDate requestedDelivery() {
+        return requestedDelivery;
+    }
+
+    public Instant deliveredAt() {
+        return deliveredAt;
+    }
+
+    public OrderStatus status() {
+        return status;
+    }
+
+    public UUID mpesaTransactionId() {
+        return mpesaTransactionId;
+    }
+
+    public String notes() {
+        return notes;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
+
+    public Instant updatedAt() {
+        return updatedAt;
+    }
 }

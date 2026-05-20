@@ -40,16 +40,19 @@
 Tokens expire: access token = 15 min, refresh token = 30 days.
 
 ### POST `/api/v1/auth/login` — Public
-Single login endpoint for all user types. The backend detects identity from the identifier format — no role selection needed on the frontend.
 
-| `identifier` format | Credential | Resolved role |
-|---|---|---|
-| E.164 phone (`+254...`) | PIN (short numeric) | `FARMER` |
-| E.164 phone (`+254...`) | Password | `RIDER` |
-| Email address | Password | `COOP_MANAGER` / `ADMIN` |
-| Email address | Password | `BUYER` |
+Single login endpoint for all user types. The backend detects identity from the identifier format — no role selection
+needed on the frontend.
+
+| `identifier` format     | Credential          | Resolved role            |
+|-------------------------|---------------------|--------------------------|
+| E.164 phone (`+254...`) | PIN (short numeric) | `FARMER`                 |
+| E.164 phone (`+254...`) | Password            | `RIDER`                  |
+| Email address           | Password            | `COOP_MANAGER` / `ADMIN` |
+| Email address           | Password            | `BUYER`                  |
 
 **Request body:**
+
 ```json
 {
   "identifier": "+254712345678",
@@ -57,12 +60,13 @@ Single login endpoint for all user types. The backend detects identity from the 
 }
 ```
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `identifier` | string | yes | E.164 phone number or email address |
-| `credential` | string | yes | PIN (farmers) or password (all others) |
+| Field        | Type   | Required | Notes                                  |
+|--------------|--------|----------|----------------------------------------|
+| `identifier` | string | yes      | E.164 phone number or email address    |
+| `credential` | string | yes      | PIN (farmers) or password (all others) |
 
 **Response `200 OK`:**
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
@@ -78,6 +82,7 @@ Single login endpoint for all user types. The backend detects identity from the 
 ```
 
 **Error responses:**
+
 - `400 Bad Request` — blank `identifier` or `credential`
 - `401 Unauthorized` — unrecognised identifier, wrong credential, or incomplete farmer registration
 - `422 Unprocessable Entity` — account is inactive
@@ -87,11 +92,14 @@ The frontend should redirect to the appropriate dashboard based on `user.role` i
 ---
 
 ### GET `/api/v1/auth/me` — Requires authentication
-Returns the authenticated user's identity from the current access token. Use this on app startup to restore session state without decoding the JWT client-side.
+
+Returns the authenticated user's identity from the current access token. Use this on app startup to restore session
+state without decoding the JWT client-side.
 
 **Headers:** `Authorization: Bearer <accessToken>`
 
 **Response `200 OK`:**
+
 ```json
 {
   "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -102,20 +110,23 @@ Returns the authenticated user's identity from the current access token. Use thi
 }
 ```
 
-| Field | Notes |
-|---|---|
-| `phone` | Present for farmers and riders; `null` for staff |
+| Field   | Notes                                                       |
+|---------|-------------------------------------------------------------|
+| `phone` | Present for farmers and riders; `null` for staff            |
 | `email` | Present for staff and buyers; `null` for farmers and riders |
 
 **Error responses:**
+
 - `401 Unauthorized` — missing or expired access token
 
 ---
 
 ### POST `/api/v1/auth/buyer/register` — Public
+
 Register a new buyer account and receive tokens immediately.
 
 **Request body:**
+
 ```json
 {
   "email": "alice@school.go.ke",
@@ -129,25 +140,27 @@ Register a new buyer account and receive tokens immediately.
 }
 ```
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `email` | string | yes | Valid email, used as login credential |
-| `password` | string | yes | Min 6 characters |
-| `phone` | string | yes | E.164 format |
-| `buyerType` | enum | yes | `SCHOOL`, `INDIVIDUAL`, `INSTITUTION`, `BUSINESS` |
-| `displayName` | string | yes | Organisation/person name shown in UI |
-| `contactPerson` | string | no | Contact name for organisations |
-| `address` | string | no | Physical delivery address |
-| `ward` | string | no | One of the 4 Kirinyaga ward names |
+| Field           | Type   | Required | Notes                                             |
+|-----------------|--------|----------|---------------------------------------------------|
+| `email`         | string | yes      | Valid email, used as login credential             |
+| `password`      | string | yes      | Min 6 characters                                  |
+| `phone`         | string | yes      | E.164 format                                      |
+| `buyerType`     | enum   | yes      | `SCHOOL`, `INDIVIDUAL`, `INSTITUTION`, `BUSINESS` |
+| `displayName`   | string | yes      | Organisation/person name shown in UI              |
+| `contactPerson` | string | no       | Contact name for organisations                    |
+| `address`       | string | no       | Physical delivery address                         |
+| `ward`          | string | no       | One of the 4 Kirinyaga ward names                 |
 
 **Response `200 OK`:** `TokenResponse` (same shape as `/auth/login`).
 
 ---
 
 ### POST `/api/v1/auth/refresh` — Public
+
 Exchange a still-valid refresh token for a new token pair.
 
 **Request body:**
+
 ```json
 {
   "refreshToken": "eyJhbGciOiJIUzI1NiJ9..."
@@ -159,9 +172,11 @@ Exchange a still-valid refresh token for a new token pair.
 ---
 
 ### POST `/api/v1/auth/logout` — Public
+
 Invalidates the refresh token (server-side revocation via Redis).
 
 **Request body:**
+
 ```json
 {
   "refreshToken": "eyJhbGciOiJIUzI1NiJ9..."
@@ -177,9 +192,11 @@ Invalidates the refresh token (server-side revocation via Redis).
 Requires role: **BUYER**
 
 ### GET `/api/v1/buyer/me`
+
 Get the authenticated buyer's profile.
 
 **Response `200 OK`:**
+
 ```json
 {
   "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -196,9 +213,11 @@ Get the authenticated buyer's profile.
 ---
 
 ### PATCH `/api/v1/buyer/me`
+
 Update the authenticated buyer's profile.
 
 **Request body:**
+
 ```json
 {
   "displayName": "St. Mary's Primary School",
@@ -208,12 +227,12 @@ Update the authenticated buyer's profile.
 }
 ```
 
-| Field | Type | Required |
-|---|---|---|
-| `displayName` | string | yes |
-| `contactPerson` | string | no |
-| `address` | string | no |
-| `ward` | string | no |
+| Field           | Type   | Required |
+|-----------------|--------|----------|
+| `displayName`   | string | yes      |
+| `contactPerson` | string | no       |
+| `address`       | string | no       |
+| `ward`          | string | no       |
 
 **Response `200 OK`:** Updated `BuyerProfileResponse`.
 
@@ -224,9 +243,11 @@ Update the authenticated buyer's profile.
 No authentication required.
 
 ### GET `/api/v1/products`
+
 List all active briquette products.
 
 **Response `200 OK`:**
+
 ```json
 [
   {
@@ -245,6 +266,7 @@ List all active briquette products.
 ---
 
 ### GET `/api/v1/products/{id}`
+
 Get a single product by UUID.
 
 **Path param:** `id` — UUID of the product.
@@ -260,9 +282,11 @@ Get a single product by UUID.
 Requires role: **BUYER**
 
 ### POST `/api/v1/buyer/orders`
+
 Place a new briquette order. Triggers M-Pesa STK Push for payment.
 
 **Request body:**
+
 ```json
 {
   "productId": "a1b2c3d4-...",
@@ -274,16 +298,17 @@ Place a new briquette order. Triggers M-Pesa STK Push for payment.
 }
 ```
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `productId` | UUID | yes | Must be an active product |
-| `quantity` | integer | yes | Min 1 |
-| `deliveryAddress` | string | yes | |
-| `deliveryPhone` | string | yes | Phone to receive M-Pesa push |
-| `requestedDelivery` | date | no | ISO 8601 date: `YYYY-MM-DD` |
-| `notes` | string | no | Delivery instructions |
+| Field               | Type    | Required | Notes                        |
+|---------------------|---------|----------|------------------------------|
+| `productId`         | UUID    | yes      | Must be an active product    |
+| `quantity`          | integer | yes      | Min 1                        |
+| `deliveryAddress`   | string  | yes      |                              |
+| `deliveryPhone`     | string  | yes      | Phone to receive M-Pesa push |
+| `requestedDelivery` | date    | no       | ISO 8601 date: `YYYY-MM-DD`  |
+| `notes`             | string  | no       | Delivery instructions        |
 
 **Response `201 Created`:**
+
 ```json
 {
   "id": "f47ac10b-...",
@@ -308,6 +333,7 @@ Place a new briquette order. Triggers M-Pesa STK Push for payment.
 ---
 
 ### GET `/api/v1/buyer/orders`
+
 List the authenticated buyer's orders, paginated.
 
 **Query params:**
@@ -318,9 +344,12 @@ List the authenticated buyer's orders, paginated.
 | `sort` | string | — | e.g. `createdAt,desc` |
 
 **Response `200 OK`:**
+
 ```json
 {
-  "content": [ /* array of OrderResponse */ ],
+  "content": [
+    /* array of OrderResponse */
+  ],
   "totalElements": 5,
   "totalPages": 1,
   "size": 20,
@@ -331,6 +360,7 @@ List the authenticated buyer's orders, paginated.
 ---
 
 ### GET `/api/v1/buyer/orders/{id}`
+
 Get a single order. The buyer can only access their own orders.
 
 **Response `200 OK`:** `OrderResponse`.  
@@ -339,6 +369,7 @@ Get a single order. The buyer can only access their own orders.
 ---
 
 ### DELETE `/api/v1/buyer/orders/{id}`
+
 Cancel an order (only if `PENDING_PAYMENT`).
 
 **Response `200 OK`:** Updated `OrderResponse` with `status: "CANCELLED"`.
@@ -350,11 +381,13 @@ Cancel an order (only if `PENDING_PAYMENT`).
 No authentication required.
 
 ### GET `/api/v1/farmers/by-phone`
+
 Look up a farmer by their phone number (used by the USSD login flow).
 
 **Query param:** `phone` — E.164 phone number.
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -378,11 +411,13 @@ Look up a farmer by their phone number (used by the USSD login flow).
 No authentication required.
 
 ### GET `/api/v1/pesticide-applications/farmer/{farmerId}`
+
 List all pesticide application records for a farmer.
 
 **Path param:** `farmerId` — UUID of the farmer.
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -408,9 +443,11 @@ List all pesticide application records for a farmer.
 No authentication required.
 
 ### GET `/api/v1/chemicals`
+
 List all active chemicals in the system.
 
 **Response `200 OK`:**
+
 ```json
 {
   "success": true,
@@ -432,6 +469,7 @@ List all active chemicals in the system.
 ---
 
 ### GET `/api/v1/chemicals/{id}`
+
 Get a single chemical by UUID.
 
 **Response `200 OK`:** Single `ChemicalResponse` wrapped in `ApiResponse`.  
@@ -444,12 +482,14 @@ Get a single chemical by UUID.
 No authentication required. Used by QR code scanners and buyers.
 
 ### GET `/api/v1/certificates/verify/{token}`
+
 Verify a produce safety certificate by its unique token (embedded in QR code).
 Each call increments the `verifiedCount`.
 
 **Path param:** `token` — alphanumeric verification token from QR code.
 
 **Response `200 OK`:**
+
 ```json
 {
   "token": "ZAO-A1B2C3D4",
@@ -473,6 +513,7 @@ Each call increments the `verifiedCount`.
 Requires: any authenticated user.
 
 ### POST `/api/v1/profile/image`
+
 Upload a profile photo. Multipart form upload.
 
 **Content-Type:** `multipart/form-data`
@@ -480,6 +521,7 @@ Upload a profile photo. Multipart form upload.
 **Form field:** `file` — image file (JPEG/PNG recommended).
 
 **Response `200 OK`:**
+
 ```json
 {
   "imageUrl": "https://sampleokoasem.sfo3.digitaloceanspaces.com/profiles/uuid.jpg"
@@ -489,9 +531,11 @@ Upload a profile photo. Multipart form upload.
 ---
 
 ### GET `/api/v1/profile/image`
+
 Get the authenticated user's current profile image URL.
 
 **Response `200 OK`:**
+
 ```json
 {
   "imageUrl": "https://sampleokoasem.sfo3.digitaloceanspaces.com/profiles/uuid.jpg"
@@ -505,9 +549,11 @@ Get the authenticated user's current profile image URL.
 Requires role: **FARMER**
 
 ### GET `/api/v1/farmer/pickups`
+
 Get all waste pickups for the authenticated farmer.
 
 **Response `200 OK`:**
+
 ```json
 [
   {
@@ -532,17 +578,25 @@ Get all waste pickups for the authenticated farmer.
 ---
 
 ### GET `/api/v1/farmer/earnings`
+
 Get the authenticated farmer's earnings summary.
 
 **Response `200 OK`:**
+
 ```json
 {
   "total": 312.50,
   "thisMonth": 125.00,
   "pickupCount": 25,
   "recentPayouts": [
-    { "amount": 62.50, "date": "2025-05-11" },
-    { "amount": 37.50, "date": "2025-05-04" }
+    {
+      "amount": 62.50,
+      "date": "2025-05-11"
+    },
+    {
+      "amount": 37.50,
+      "date": "2025-05-04"
+    }
   ]
 }
 ```
@@ -554,6 +608,7 @@ Get the authenticated farmer's earnings summary.
 Requires role: **RIDER**
 
 ### GET `/api/v1/rider/pickups/today`
+
 Get all pickups scheduled for the authenticated rider today.
 
 **Response `200 OK`:** Array of `WastePickupResponse` (same shape as section 10).
@@ -561,6 +616,7 @@ Get all pickups scheduled for the authenticated rider today.
 ---
 
 ### GET `/api/v1/rider/pickups/{id}`
+
 Get a specific pickup by ID.
 
 **Response `200 OK`:** `WastePickupResponse`.
@@ -568,6 +624,7 @@ Get a specific pickup by ID.
 ---
 
 ### POST `/api/v1/rider/pickups/{id}/collect`
+
 Mark a pickup as collected. Accepts weight and optional proof photo.
 
 **Content-Type:** `multipart/form-data`
@@ -580,6 +637,7 @@ Mark a pickup as collected. Accepts weight and optional proof photo.
 | `notes` | string | no | Collection notes |
 
 **Example curl:**
+
 ```bash
 curl -X POST /api/v1/rider/pickups/{id}/collect \
   -H "Authorization: Bearer <token>" \
@@ -597,6 +655,7 @@ curl -X POST /api/v1/rider/pickups/{id}/collect \
 Requires role: **COOP_MANAGER** or **ADMIN**
 
 ### GET `/api/v1/dashboard/pickups`
+
 Search pickups with optional filters, paginated.
 
 **Query params:**
@@ -616,6 +675,7 @@ Search pickups with optional filters, paginated.
 ---
 
 ### POST `/api/v1/dashboard/pickups/{id}/assign`
+
 Assign a rider to a pickup.
 
 **Query param:** `riderId` — UUID of the rider to assign.
@@ -625,6 +685,7 @@ Assign a rider to a pickup.
 ---
 
 ### POST `/api/v1/dashboard/pickups/{id}/cancel`
+
 Cancel a pickup.
 
 **Response `200 OK`:** Updated `WastePickupResponse` with `status: "CANCELLED"`.
@@ -636,9 +697,11 @@ Cancel a pickup.
 Requires role: **COOP_MANAGER** or **ADMIN**
 
 ### POST `/api/v1/dashboard/inventory/intake`
+
 Record a waste intake batch (collection of multiple pickups into the warehouse).
 
 **Request body:**
+
 ```json
 {
   "intakeDate": "2025-05-19",
@@ -651,20 +714,24 @@ Record a waste intake batch (collection of multiple pickups into the warehouse).
 }
 ```
 
-| Field | Type | Required |
-|---|---|---|
-| `intakeDate` | date | yes |
-| `totalKg` | decimal | yes, > 0 |
-| `pickupIds` | array of UUID | yes |
-| `notes` | string | no |
+| Field        | Type          | Required |
+|--------------|---------------|----------|
+| `intakeDate` | date          | yes      |
+| `totalKg`    | decimal       | yes, > 0 |
+| `pickupIds`  | array of UUID | yes      |
+| `notes`      | string        | no       |
 
 **Response `201 Created`:**
+
 ```json
 {
   "id": "a1b2c3d4-...",
   "intakeDate": "2025-05-19",
   "totalKg": 145.50,
-  "pickupIds": ["f1a2b3c4-...", "e2d3c4b5-..."],
+  "pickupIds": [
+    "f1a2b3c4-...",
+    "e2d3c4b5-..."
+  ],
   "notes": "Morning batch",
   "recordedBy": "staff-uuid-...",
   "createdAt": "2025-05-19T08:00:00Z"
@@ -674,6 +741,7 @@ Record a waste intake batch (collection of multiple pickups into the warehouse).
 ---
 
 ### GET `/api/v1/dashboard/inventory/intake`
+
 List all recorded intake batches.
 
 **Response `200 OK`:** Array of `WasteIntakeBatch`.
@@ -685,9 +753,11 @@ List all recorded intake batches.
 Requires role: **COOP_MANAGER** or **ADMIN**
 
 ### POST `/api/v1/dashboard/inventory/batches`
+
 Record a new briquette production batch.
 
 **Request body:**
+
 ```json
 {
   "batchNumber": "BRQ-2025-05-001",
@@ -697,14 +767,15 @@ Record a new briquette production batch.
 }
 ```
 
-| Field | Type | Required |
-|---|---|---|
-| `batchNumber` | string | yes |
-| `kgProduced` | decimal | yes, > 0 |
-| `producedAt` | datetime | yes (ISO 8601) |
-| `sourceIntakeId` | UUID | no |
+| Field            | Type     | Required       |
+|------------------|----------|----------------|
+| `batchNumber`    | string   | yes            |
+| `kgProduced`     | decimal  | yes, > 0       |
+| `producedAt`     | datetime | yes (ISO 8601) |
+| `sourceIntakeId` | UUID     | no             |
 
 **Response `201 Created`:**
+
 ```json
 {
   "id": "b2c3d4e5-...",
@@ -720,6 +791,7 @@ Record a new briquette production batch.
 ---
 
 ### GET `/api/v1/dashboard/inventory/batches`
+
 List all production batches.
 
 **Response `200 OK`:** Array of `BriquetteBatch`.
@@ -727,9 +799,11 @@ List all production batches.
 ---
 
 ### GET `/api/v1/dashboard/inventory/stock`
+
 Get total available briquette stock in kg.
 
 **Response `200 OK`:**
+
 ```json
 240.50
 ```
@@ -741,6 +815,7 @@ Get total available briquette stock in kg.
 Requires role: **COOP_MANAGER** or **ADMIN**
 
 ### GET `/api/v1/dashboard/orders`
+
 List all orders, optionally filtered by status.
 
 **Query params:**
@@ -755,6 +830,7 @@ List all orders, optionally filtered by status.
 ---
 
 ### POST `/api/v1/dashboard/orders/{id}/ready`
+
 Mark an order as ready for delivery.
 
 **Response `200 OK`:** Updated `OrderResponse` with `status: "READY_FOR_DELIVERY"`.
@@ -762,6 +838,7 @@ Mark an order as ready for delivery.
 ---
 
 ### POST `/api/v1/dashboard/orders/{id}/deliver`
+
 Mark an order as delivered.
 
 **Response `200 OK`:** Updated `OrderResponse` with `status: "DELIVERED"`.
@@ -773,9 +850,11 @@ Mark an order as delivered.
 Requires role: **COOP_MANAGER** or **ADMIN**
 
 ### GET `/api/v1/dashboard/certificates/{id}`
+
 Get a full certificate record by its UUID.
 
 **Response `200 OK`:**
+
 ```json
 {
   "id": "c3d4e5f6-...",
@@ -792,6 +871,7 @@ Get a full certificate record by its UUID.
 ---
 
 ### POST `/api/v1/dashboard/certificates/{id}/revoke`
+
 Revoke an active certificate.
 
 **Response `200 OK`:** Updated `CertificateResponse` with `status: "REVOKED"`.
@@ -803,9 +883,11 @@ Revoke an active certificate.
 Requires role: **ADMIN** (unless noted)
 
 ### POST `/api/v1/admin/staff`
+
 Create a new staff user.
 
 **Request body:**
+
 ```json
 {
   "email": "manager@zaocycle.co.ke",
@@ -815,14 +897,15 @@ Create a new staff user.
 }
 ```
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `email` | string | yes | Valid email |
-| `password` | string | yes | Min 6 chars |
-| `fullName` | string | yes | |
-| `role` | enum | yes | `COOP_MANAGER` or `ADMIN` |
+| Field      | Type   | Required | Notes                     |
+|------------|--------|----------|---------------------------|
+| `email`    | string | yes      | Valid email               |
+| `password` | string | yes      | Min 6 chars               |
+| `fullName` | string | yes      |                           |
+| `role`     | enum   | yes      | `COOP_MANAGER` or `ADMIN` |
 
 **Response `201 Created`:**
+
 ```json
 {
   "id": "e4f5a6b7-...",
@@ -838,6 +921,7 @@ Create a new staff user.
 ---
 
 ### GET `/api/v1/admin/staff`
+
 List all staff users.
 
 **Response `200 OK`:** Array of `StaffResponse`.
@@ -845,6 +929,7 @@ List all staff users.
 ---
 
 ### GET `/api/v1/admin/staff/{id}`
+
 Get a single staff user. Accessible by **ADMIN** or **COOP_MANAGER**.
 
 **Response `200 OK`:** `StaffResponse`.
@@ -852,6 +937,7 @@ Get a single staff user. Accessible by **ADMIN** or **COOP_MANAGER**.
 ---
 
 ### DELETE `/api/v1/admin/staff/{id}`
+
 Deactivate a staff user (soft delete — `active: false`).
 
 **Response `200 OK`:** Updated `StaffResponse` with `active: false`.
@@ -859,6 +945,7 @@ Deactivate a staff user (soft delete — `active: false`).
 ---
 
 ### POST `/api/v1/admin/staff/{id}/activate`
+
 Reactivate a previously deactivated staff user.
 
 **Response `200 OK`:** Updated `StaffResponse` with `active: true`.
@@ -870,9 +957,11 @@ Reactivate a previously deactivated staff user.
 Requires role: **ADMIN** (unless noted)
 
 ### POST `/api/v1/admin/riders`
+
 Register a new rider.
 
 **Request body:**
+
 ```json
 {
   "phone": "+254722000001",
@@ -882,14 +971,15 @@ Register a new rider.
 }
 ```
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `phone` | string | yes | E.164 format |
-| `fullName` | string | yes | |
-| `ward` | string | yes | One of: `MWEA`, `GICHUGU`, `KIRINYAGA_CENTRAL`, `NDIA` |
-| `password` | string | yes | Min 6 chars |
+| Field      | Type   | Required | Notes                                                  |
+|------------|--------|----------|--------------------------------------------------------|
+| `phone`    | string | yes      | E.164 format                                           |
+| `fullName` | string | yes      |                                                        |
+| `ward`     | string | yes      | One of: `MWEA`, `GICHUGU`, `KIRINYAGA_CENTRAL`, `NDIA` |
+| `password` | string | yes      | Min 6 chars                                            |
 
 **Response `201 Created`:**
+
 ```json
 {
   "id": "f5a6b7c8-...",
@@ -903,6 +993,7 @@ Register a new rider.
 ---
 
 ### GET `/api/v1/admin/riders/{id}`
+
 Get a rider by ID. Accessible by **ADMIN** or **COOP_MANAGER**.
 
 **Response `200 OK`:** `RiderResponse`.  
@@ -911,6 +1002,7 @@ Get a rider by ID. Accessible by **ADMIN** or **COOP_MANAGER**.
 ---
 
 ### DELETE `/api/v1/admin/riders/{id}`
+
 Deactivate a rider.
 
 **Response `200 OK`:** Updated `RiderResponse` with `active: false`.
@@ -922,6 +1014,7 @@ Deactivate a rider.
 Requires role: **ADMIN**. Dev/testing utility.
 
 ### POST `/api/v1/admin/scheduler/fast-forward/{applicationId}`
+
 Simulate harvest maturity for a pesticide application (fire the maturity event after N seconds).
 
 **Path param:** `applicationId` — UUID of the pesticide application.  
@@ -936,36 +1029,52 @@ Simulate harvest maturity for a pesticide application (fire the maturity event a
 These endpoints are called by third-party services (M-Pesa Daraja, Africa's Talking). **No authentication required.**
 
 ### POST `/api/v1/payments/mpesa/b2c/result`
+
 M-Pesa B2C result callback. Called by Safaricom when a farmer payout completes.
 
 **Response `200 OK`:**
+
 ```json
-{ "ResponseCode": "0", "ResponseDesc": "Accepted" }
+{
+  "ResponseCode": "0",
+  "ResponseDesc": "Accepted"
+}
 ```
 
 ---
 
 ### POST `/api/v1/payments/mpesa/b2c/timeout`
+
 M-Pesa B2C timeout callback.
 
 **Response `200 OK`:**
+
 ```json
-{ "ResponseCode": "0", "ResponseDesc": "Accepted" }
+{
+  "ResponseCode": "0",
+  "ResponseDesc": "Accepted"
+}
 ```
 
 ---
 
 ### POST `/api/v1/payments/mpesa/stkpush/callback`
+
 M-Pesa STK Push callback. Called by Safaricom after a buyer completes/fails payment.
 
 **Response `200 OK`:**
+
 ```json
-{ "ResultCode": 0, "ResultDesc": "Accepted" }
+{
+  "ResultCode": 0,
+  "ResultDesc": "Accepted"
+}
 ```
 
 ---
 
 ### POST `/api/v1/sms/inbound`
+
 Africa's Talking inbound SMS webhook. Handles farmer SMS commands.
 
 **Content-Type:** `application/x-www-form-urlencoded`
@@ -981,6 +1090,7 @@ Africa's Talking inbound SMS webhook. Handles farmer SMS commands.
 Called by Africa's Talking USSD platform. Not intended for web frontend.
 
 ### POST `/api/v1/ussd/callback`
+
 **Content-Type:** `application/x-www-form-urlencoded`  
 **Produces:** `text/plain`
 
@@ -998,16 +1108,17 @@ All errors return a consistent JSON body:
 }
 ```
 
-| HTTP Status | Trigger |
-|---|---|
-| `400 Bad Request` | Missing/invalid request fields (validation failure) |
-| `401 Unauthorized` | Bad credentials, expired/invalid JWT |
-| `403 Forbidden` | Authenticated but insufficient role |
-| `404 Not Found` | Resource not found |
-| `422 Unprocessable Entity` | Business rule violation (domain exception) |
-| `500 Internal Server Error` | Unexpected server error |
+| HTTP Status                 | Trigger                                             |
+|-----------------------------|-----------------------------------------------------|
+| `400 Bad Request`           | Missing/invalid request fields (validation failure) |
+| `401 Unauthorized`          | Bad credentials, expired/invalid JWT                |
+| `403 Forbidden`             | Authenticated but insufficient role                 |
+| `404 Not Found`             | Resource not found                                  |
+| `422 Unprocessable Entity`  | Business rule violation (domain exception)          |
+| `500 Internal Server Error` | Unexpected server error                             |
 
 **Validation error example:**
+
 ```json
 {
   "message": "email: must be a well-formed email address, password: size must be between 6 and 2147483647"
@@ -1019,64 +1130,72 @@ All errors return a consistent JSON body:
 ## 23. Enumerations Reference
 
 ### Role
-| Value | Description |
-|---|---|
-| `FARMER` | Registered farmer using USSD |
-| `RIDER` | Collection rider |
+
+| Value          | Description                          |
+|----------------|--------------------------------------|
+| `FARMER`       | Registered farmer using USSD         |
+| `RIDER`        | Collection rider                     |
 | `COOP_MANAGER` | Cooperative staff — dashboard access |
-| `ADMIN` | Full system access |
-| `BUYER` | Briquette buyer — web/app |
+| `ADMIN`        | Full system access                   |
+| `BUYER`        | Briquette buyer — web/app            |
 
 ### BuyerType
-| Value | Description |
-|---|---|
-| `SCHOOL` | School institution |
-| `INDIVIDUAL` | Private individual |
+
+| Value         | Description                |
+|---------------|----------------------------|
+| `SCHOOL`      | School institution         |
+| `INDIVIDUAL`  | Private individual         |
 | `INSTITUTION` | Government/NGO institution |
-| `BUSINESS` | Commercial business |
+| `BUSINESS`    | Commercial business        |
 
 ### Ward
-| Value | Display Name |
-|---|---|
-| `MWEA` | Mwea |
-| `GICHUGU` | Gichugu |
+
+| Value               | Display Name      |
+|---------------------|-------------------|
+| `MWEA`              | Mwea              |
+| `GICHUGU`           | Gichugu           |
 | `KIRINYAGA_CENTRAL` | Kirinyaga Central |
-| `NDIA` | Ndia |
+| `NDIA`              | Ndia              |
 
 ### PickupStatus
-| Value | Meaning |
-|---|---|
+
+| Value       | Meaning                          |
+|-------------|----------------------------------|
 | `REQUESTED` | Farmer requested pickup via USSD |
-| `ASSIGNED` | Rider assigned by coop manager |
-| `COLLECTED` | Rider collected the waste |
-| `PAID` | Farmer payout sent via M-Pesa |
-| `CANCELLED` | Pickup cancelled |
-| `FAILED` | Pickup or payment failed |
+| `ASSIGNED`  | Rider assigned by coop manager   |
+| `COLLECTED` | Rider collected the waste        |
+| `PAID`      | Farmer payout sent via M-Pesa    |
+| `CANCELLED` | Pickup cancelled                 |
+| `FAILED`    | Pickup or payment failed         |
 
 ### ApplicationStatus (Pesticide)
-| Value | Meaning |
-|---|---|
-| `PENDING` | Application recorded, within waiting period |
-| `SAFE` | Safe harvest date reached — certificate auto-issued |
-| `EXPIRED` | Certificate validity window has passed |
-| `INVALIDATED` | Manually invalidated |
+
+| Value         | Meaning                                             |
+|---------------|-----------------------------------------------------|
+| `PENDING`     | Application recorded, within waiting period         |
+| `SAFE`        | Safe harvest date reached — certificate auto-issued |
+| `EXPIRED`     | Certificate validity window has passed              |
+| `INVALIDATED` | Manually invalidated                                |
 
 ### CertificateStatus
-| Value | Meaning |
-|---|---|
-| `ACTIVE` | Valid and verifiable |
+
+| Value     | Meaning                         |
+|-----------|---------------------------------|
+| `ACTIVE`  | Valid and verifiable            |
 | `EXPIRED` | Past the 14-day validity window |
-| `REVOKED` | Manually revoked by staff |
+| `REVOKED` | Manually revoked by staff       |
 
 ### OrderStatus
-| Value | Meaning |
-|---|---|
-| `PENDING_PAYMENT` | Awaiting M-Pesa STK push completion |
-| `PAID` | Payment confirmed |
-| `READY_FOR_DELIVERY` | Staff packed and ready |
-| `DELIVERED` | Order delivered |
-| `CANCELLED` | Cancelled by buyer or staff |
-| `REFUNDED` | Refund issued |
+
+| Value                | Meaning                             |
+|----------------------|-------------------------------------|
+| `PENDING_PAYMENT`    | Awaiting M-Pesa STK push completion |
+| `PAID`               | Payment confirmed                   |
+| `READY_FOR_DELIVERY` | Staff packed and ready              |
+| `DELIVERED`          | Order delivered                     |
+| `CANCELLED`          | Cancelled by buyer or staff         |
+| `REFUNDED`           | Refund issued                       |
 
 ### ChemicalCategory
+
 `FUNGICIDE` | `INSECTICIDE` | `HERBICIDE` | `OTHER`

@@ -27,8 +27,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RiderAssignmentServiceTest {
 
-    @Mock private RiderService riderService;
-    @Mock private PickupRepository pickupRepo;
+    @Mock
+    private RiderService riderService;
+    @Mock
+    private PickupRepository pickupRepo;
 
     private RiderAssignmentService service;
 

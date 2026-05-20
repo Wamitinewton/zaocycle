@@ -22,14 +22,15 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StaffServiceImplTest {
 
-    @Mock private StaffUserRepository repository;
-    @Mock private PasswordEncoder passwordEncoder;
+    @Mock
+    private StaffUserRepository repository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private StaffServiceImpl service;
 

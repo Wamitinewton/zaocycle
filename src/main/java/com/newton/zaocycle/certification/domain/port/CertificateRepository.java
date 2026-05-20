@@ -7,7 +7,10 @@ import java.util.UUID;
 
 public interface CertificateRepository {
     Optional<Certificate> findById(UUID id);
+
     Optional<Certificate> findByToken(String token);
+
     Optional<Certificate> findByApplicationId(UUID applicationId);
+
     Certificate save(Certificate cert);
 }

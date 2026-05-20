@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface IntakeService {
     WasteIntakeBatch record(RecordIntakeCommand cmd);
+
     List<WasteIntakeBatch> findAll();
 }

@@ -11,4 +11,5 @@ public record ApplicationMatured(
         UUID chemicalId,
         Instant appliedAt,
         LocalDate safeHarvestDate
-) {}
+) {
+}

@@ -31,14 +31,43 @@ public final class SessionLog {
         this.createdAt = createdAt;
     }
 
-    public UUID id()             { return id; }
-    public String sessionId()    { return sessionId; }
-    public String phone()        { return phone; }
-    public String serviceCode()  { return serviceCode; }
-    public String inputText()    { return inputText; }
-    public String responseText() { return responseText; }
-    public String responseType() { return responseType; }
-    public Integer durationMs()  { return durationMs; }
-    public String errorMessage() { return errorMessage; }
-    public Instant createdAt()   { return createdAt; }
+    public UUID id() {
+        return id;
+    }
+
+    public String sessionId() {
+        return sessionId;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public String serviceCode() {
+        return serviceCode;
+    }
+
+    public String inputText() {
+        return inputText;
+    }
+
+    public String responseText() {
+        return responseText;
+    }
+
+    public String responseType() {
+        return responseType;
+    }
+
+    public Integer durationMs() {
+        return durationMs;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public Instant createdAt() {
+        return createdAt;
+    }
 }

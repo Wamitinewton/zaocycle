@@ -4,7 +4,8 @@ import com.newton.zaocycle.notification.domain.model.OutboundSms;
 
 class OutboundSmsEntityMapper {
 
-    private OutboundSmsEntityMapper() {}
+    private OutboundSmsEntityMapper() {
+    }
 
     static OutboundSms toDomain(OutboundSmsEntity e) {
         return new OutboundSms(e.getId(), e.getPhone(), e.getTemplateCode(), e.getBody(),

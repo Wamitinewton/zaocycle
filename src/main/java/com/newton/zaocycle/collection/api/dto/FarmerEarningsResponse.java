@@ -1,7 +1,6 @@
 package com.newton.zaocycle.collection.api.dto;
 
 import com.newton.zaocycle.collection.domain.model.FarmerEarnings;
-import com.newton.zaocycle.collection.domain.model.PayoutEntry;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,13 +12,14 @@ public record FarmerEarningsResponse(
         long pickupCount,
         List<PayoutEntryDto> recentPayouts
 ) {
-    public record PayoutEntryDto(BigDecimal amount, LocalDate date) {}
-
     public static FarmerEarningsResponse from(FarmerEarnings earnings) {
         List<PayoutEntryDto> recent = earnings.recentPayouts().stream()
                 .map(e -> new PayoutEntryDto(e.amount(), e.date()))
                 .toList();
         return new FarmerEarningsResponse(
                 earnings.total(), earnings.thisMonth(), earnings.pickupCount(), recent);
+    }
+
+    public record PayoutEntryDto(BigDecimal amount, LocalDate date) {
     }
 }

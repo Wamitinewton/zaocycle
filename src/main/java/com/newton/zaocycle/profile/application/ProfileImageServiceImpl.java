@@ -27,10 +27,10 @@ class ProfileImageServiceImpl implements ProfileImageService {
     private final StaffService staffService;
 
     ProfileImageServiceImpl(ProfileImageStore imageStore,
-                             FarmerService farmerService,
-                             RiderService riderService,
-                             BuyerService buyerService,
-                             StaffService staffService) {
+                            FarmerService farmerService,
+                            RiderService riderService,
+                            BuyerService buyerService,
+                            StaffService staffService) {
         this.imageStore = imageStore;
         this.farmerService = farmerService;
         this.riderService = riderService;
@@ -90,9 +90,9 @@ class ProfileImageServiceImpl implements ProfileImageService {
 
     private String extensionFor(String contentType) {
         return switch (contentType) {
-            case "image/png"  -> "png";
+            case "image/png" -> "png";
             case "image/webp" -> "webp";
-            default           -> "jpg";
+            default -> "jpg";
         };
     }
 }

@@ -50,13 +50,39 @@ public final class Certificate {
         return Instant.now().isAfter(expiresAt);
     }
 
-    public UUID id()                    { return id; }
-    public UUID applicationId()         { return applicationId; }
-    public String token()               { return token; }
-    public String qrImageUrl()          { return qrImageUrl; }
-    public Instant issuedAt()           { return issuedAt; }
-    public Instant expiresAt()          { return expiresAt; }
-    public int verifiedCount()          { return verifiedCount; }
-    public Instant lastVerifiedAt()     { return lastVerifiedAt; }
-    public CertificateStatus status()   { return status; }
+    public UUID id() {
+        return id;
+    }
+
+    public UUID applicationId() {
+        return applicationId;
+    }
+
+    public String token() {
+        return token;
+    }
+
+    public String qrImageUrl() {
+        return qrImageUrl;
+    }
+
+    public Instant issuedAt() {
+        return issuedAt;
+    }
+
+    public Instant expiresAt() {
+        return expiresAt;
+    }
+
+    public int verifiedCount() {
+        return verifiedCount;
+    }
+
+    public Instant lastVerifiedAt() {
+        return lastVerifiedAt;
+    }
+
+    public CertificateStatus status() {
+        return status;
+    }
 }

@@ -6,5 +6,6 @@ import com.newton.zaocycle.ussd.domain.model.UssdSession;
 
 public interface MenuHandler {
     MenuState state();
+
     MenuResponse handle(UssdSession session, String input);
 }

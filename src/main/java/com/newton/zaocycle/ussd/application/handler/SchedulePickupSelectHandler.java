@@ -29,6 +29,15 @@ public class SchedulePickupSelectHandler implements MenuHandler {
         this.menuDispatcher = menuDispatcher;
     }
 
+    private static int parseChoice(String input, int max) {
+        try {
+            int n = Integer.parseInt(input.trim());
+            return (n >= 1 && n <= max) ? n : -1;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
     @Override
     public MenuState state() {
         return MenuState.SCHEDULE_PICKUP_SELECT;
@@ -80,14 +89,5 @@ public class SchedulePickupSelectHandler implements MenuHandler {
         session.put("selectedApplicationId", ids.get(choice - 1));
         session.setState(MenuState.SCHEDULE_PICKUP_CONFIRM);
         return menuDispatcher.dispatch(session, "");
-    }
-
-    private static int parseChoice(String input, int max) {
-        try {
-            int n = Integer.parseInt(input.trim());
-            return (n >= 1 && n <= max) ? n : -1;
-        } catch (NumberFormatException e) {
-            return -1;
-        }
     }
 }

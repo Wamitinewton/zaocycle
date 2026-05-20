@@ -22,8 +22,8 @@ public class DarajaTokenService {
     private final RestClient restClient;
 
     public DarajaTokenService(DarajaProperties props,
-                               StringRedisTemplate redis,
-                               RestClient.Builder restClientBuilder) {
+                              StringRedisTemplate redis,
+                              RestClient.Builder restClientBuilder) {
         this.props = props;
         this.redis = redis;
         this.restClient = restClientBuilder.build();

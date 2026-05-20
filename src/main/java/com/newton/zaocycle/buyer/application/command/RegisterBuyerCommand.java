@@ -11,4 +11,5 @@ public record RegisterBuyerCommand(
         String contactPerson,
         String address,
         String ward
-) {}
+) {
+}

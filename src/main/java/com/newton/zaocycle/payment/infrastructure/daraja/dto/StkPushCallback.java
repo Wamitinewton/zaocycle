@@ -9,22 +9,26 @@ public record StkPushCallback(
 ) {
     public record Body(
             @JsonProperty("stkCallback") StkCallback stkCallback
-    ) {}
+    ) {
+    }
 
     public record StkCallback(
-            @JsonProperty("MerchantRequestID")  String merchantRequestId,
-            @JsonProperty("CheckoutRequestID")  String checkoutRequestId,
-            @JsonProperty("ResultCode")         int resultCode,
-            @JsonProperty("ResultDesc")         String resultDesc,
-            @JsonProperty("CallbackMetadata")   CallbackMetadata callbackMetadata
-    ) {}
+            @JsonProperty("MerchantRequestID") String merchantRequestId,
+            @JsonProperty("CheckoutRequestID") String checkoutRequestId,
+            @JsonProperty("ResultCode") int resultCode,
+            @JsonProperty("ResultDesc") String resultDesc,
+            @JsonProperty("CallbackMetadata") CallbackMetadata callbackMetadata
+    ) {
+    }
 
     public record CallbackMetadata(
             @JsonProperty("Item") List<CallbackItem> item
-    ) {}
+    ) {
+    }
 
     public record CallbackItem(
-            @JsonProperty("Name")  String name,
+            @JsonProperty("Name") String name,
             @JsonProperty("Value") Object value
-    ) {}
+    ) {
+    }
 }

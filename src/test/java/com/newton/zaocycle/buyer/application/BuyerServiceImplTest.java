@@ -27,8 +27,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BuyerServiceImplTest {
 
-    @Mock private BuyerRepository repository;
-    @Mock private PasswordEncoder passwordEncoder;
+    @Mock
+    private BuyerRepository repository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private BuyerServiceImpl service;
 

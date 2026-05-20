@@ -15,13 +15,22 @@ import java.util.UUID;
 
 public interface PickupRepository {
     Optional<WastePickup> findById(UUID id);
+
     WastePickup save(WastePickup pickup);
+
     List<WastePickup> findByRiderIdAndScheduledFor(UUID riderId, LocalDate date);
+
     List<WastePickup> findByFarmerId(UUID farmerId);
+
     boolean existsByFarmerIdAndStatusIn(UUID farmerId, List<PickupStatus> statuses);
+
     BigDecimal sumPayoutsByFarmer(UUID farmerId);
+
     BigDecimal sumPayoutsByFarmerSince(UUID farmerId, Instant since);
+
     long countPaidByFarmer(UUID farmerId);
+
     List<WastePickup> findRecentPaidByFarmer(UUID farmerId, int limit);
+
     Page<WastePickup> search(PickupFilter filter, Pageable pageable);
 }

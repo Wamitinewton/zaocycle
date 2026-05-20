@@ -8,4 +8,5 @@ public record AtRecipientDto(
         @JsonProperty("statusCode") int statusCode,
         @JsonProperty("messageId") String messageId,
         @JsonProperty("cost") String cost
-) {}
+) {
+}

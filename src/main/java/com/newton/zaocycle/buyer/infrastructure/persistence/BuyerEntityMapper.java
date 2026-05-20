@@ -5,7 +5,8 @@ import com.newton.zaocycle.buyer.domain.model.BuyerType;
 
 final class BuyerEntityMapper {
 
-    private BuyerEntityMapper() {}
+    private BuyerEntityMapper() {
+    }
 
     static Buyer toDomain(BuyerEntity e) {
         Buyer buyer = new Buyer(

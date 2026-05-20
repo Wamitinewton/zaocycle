@@ -9,4 +9,5 @@ public record CreateBatchCommand(
         BigDecimal kgProduced,
         Instant producedAt,
         UUID sourceIntakeId
-) {}
+) {
+}

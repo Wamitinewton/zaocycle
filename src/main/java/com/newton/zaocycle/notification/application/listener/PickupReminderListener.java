@@ -20,8 +20,8 @@ public class PickupReminderListener {
     private final NotificationService notifications;
 
     public PickupReminderListener(PickupQueryService pickupQueryService,
-                                   FarmerService farmerService,
-                                   NotificationService notifications) {
+                                  FarmerService farmerService,
+                                  NotificationService notifications) {
         this.pickupQueryService = pickupQueryService;
         this.farmerService = farmerService;
         this.notifications = notifications;

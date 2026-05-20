@@ -14,15 +14,15 @@ public enum Ward {
         this.displayName = displayName;
     }
 
-    public String displayName() {
-        return displayName;
-    }
-
     public static Ward fromIndex(int oneBasedIndex) {
         Ward[] values = values();
         if (oneBasedIndex < 1 || oneBasedIndex > values.length) {
             throw new ValidationException("Invalid ward selection: " + oneBasedIndex);
         }
         return values[oneBasedIndex - 1];
+    }
+
+    public String displayName() {
+        return displayName;
     }
 }

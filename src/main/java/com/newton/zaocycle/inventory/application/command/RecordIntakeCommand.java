@@ -11,4 +11,5 @@ public record RecordIntakeCommand(
         List<UUID> pickupIds,
         String notes,
         UUID recordedBy
-) {}
+) {
+}

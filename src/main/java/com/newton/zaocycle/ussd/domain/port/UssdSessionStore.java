@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface UssdSessionStore {
     Optional<UssdSession> find(String sessionId);
+
     void save(UssdSession session);
+
     void delete(String sessionId);
 }

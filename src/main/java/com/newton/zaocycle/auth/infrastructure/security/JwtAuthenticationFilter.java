@@ -2,6 +2,7 @@ package com.newton.zaocycle.auth.infrastructure.security;
 
 import com.newton.zaocycle.auth.application.JwtService;
 import com.newton.zaocycle.auth.domain.model.AuthenticatedPrincipal;
+import com.newton.zaocycle.auth.domain.model.Role;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,8 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-
-import com.newton.zaocycle.auth.domain.model.Role;
 
 @Component
 class JwtAuthenticationFilter extends OncePerRequestFilter {
