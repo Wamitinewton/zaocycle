@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -52,6 +54,7 @@ class MpesaTransactionEntity extends AuditableEntity {
     @Column(name = "result_desc")
     private String resultDesc;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "raw_callback", columnDefinition = "jsonb")
     private String rawCallback;
 

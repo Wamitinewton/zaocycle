@@ -6,9 +6,12 @@ import com.newton.zaocycle.shared.api.ApiResponse;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/farmers")
@@ -23,6 +26,14 @@ class FarmerController {
     @GetMapping("/by-phone")
     ResponseEntity<ApiResponse<FarmerResponse>> getByPhone(@RequestParam String phone) {
         return service.findByPhone(PhoneNumber.of(phone))
+                .map(FarmerResponse::from)
+                .map(r -> ResponseEntity.ok(ApiResponse.ok(r)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<ApiResponse<FarmerResponse>> getById(@PathVariable UUID id) {
+        return service.findById(id)
                 .map(FarmerResponse::from)
                 .map(r -> ResponseEntity.ok(ApiResponse.ok(r)))
                 .orElse(ResponseEntity.notFound().build());

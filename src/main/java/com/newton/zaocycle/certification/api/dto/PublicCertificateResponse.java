@@ -3,6 +3,8 @@ package com.newton.zaocycle.certification.api.dto;
 import com.newton.zaocycle.certification.domain.model.Certificate;
 import com.newton.zaocycle.pesticide.domain.model.PesticideApplication;
 
+import java.util.UUID;
+
 public record PublicCertificateResponse(
         String token,
         String status,
@@ -12,7 +14,9 @@ public record PublicCertificateResponse(
         String crop,
         String chemicalName,
         String farmerName,
-        String ward
+        String ward,
+        UUID farmerId,
+        String qrImageUrl
 ) {
     public static PublicCertificateResponse from(Certificate cert, PesticideApplication application,
                                                  String chemicalName, String farmerName, String ward) {
@@ -25,7 +29,9 @@ public record PublicCertificateResponse(
                 application.crop(),
                 chemicalName,
                 farmerName,
-                ward
+                ward,
+                application.farmerId(),
+                cert.qrImageUrl()
         );
     }
 }
