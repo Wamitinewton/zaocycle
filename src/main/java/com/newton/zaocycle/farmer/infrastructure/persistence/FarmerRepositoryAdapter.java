@@ -5,6 +5,8 @@ import com.newton.zaocycle.farmer.domain.port.FarmerRepository;
 import com.newton.zaocycle.shared.domain.PhoneNumber;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +27,13 @@ class FarmerRepositoryAdapter implements FarmerRepository {
     @Override
     public Optional<Farmer> findById(UUID id) {
         return jpa.findById(id).map(FarmerEntityMapper::toDomain);
+    }
+
+    @Override
+    public List<Farmer> findAllByIds(Collection<UUID> ids) {
+        return jpa.findAllById(ids).stream()
+                .map(FarmerEntityMapper::toDomain)
+                .toList();
     }
 
     @Override

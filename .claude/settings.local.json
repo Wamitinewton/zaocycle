@@ -7,7 +7,11 @@
       "Bash(./gradlew test *)",
       "Bash(xargs cat)",
       "Bash(python3 -c \"import bcrypt; h = bcrypt.hashpw\\(b'ZaoCycle123!', bcrypt.gensalt\\(12\\)\\); print\\(h.decode\\(\\)\\)\")",
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(xargs cat -n)",
+      "WebSearch",
+      "WebFetch(domain:payhero.co.ke)",
+      "WebFetch(domain:docs.payhero.co.ke)"
     ]
   }
 }

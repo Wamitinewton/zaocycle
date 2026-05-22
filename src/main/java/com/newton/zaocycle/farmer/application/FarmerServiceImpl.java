@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +38,12 @@ class FarmerServiceImpl implements FarmerService {
     @Transactional(readOnly = true)
     public Optional<Farmer> findById(UUID id) {
         return repository.findById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Farmer> findAllByIds(Collection<UUID> ids) {
+        return repository.findAllByIds(ids);
     }
 
     @Override

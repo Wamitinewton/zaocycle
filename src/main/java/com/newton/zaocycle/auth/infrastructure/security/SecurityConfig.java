@@ -42,7 +42,7 @@ public class SecurityConfig {
                         // Public webhook / callback endpoints
                         .requestMatchers("/api/v1/ussd/**").permitAll()
                         .requestMatchers(POST, "/api/v1/sms/inbound").permitAll()
-                        .requestMatchers("/api/v1/payments/mpesa/**").permitAll()
+                        .requestMatchers("/api/v1/payments/payhero/**").permitAll()
                         // Public certificate verification
                         .requestMatchers("/api/v1/certificates/verify/**").permitAll()
                         // Public product catalogue

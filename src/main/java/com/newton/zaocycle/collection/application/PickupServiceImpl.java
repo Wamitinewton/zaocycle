@@ -13,6 +13,8 @@ import com.newton.zaocycle.rider.application.RiderService;
 import com.newton.zaocycle.rider.domain.model.Rider;
 import com.newton.zaocycle.scheduling.application.SchedulingService;
 import com.newton.zaocycle.shared.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ import java.util.UUID;
 
 @Service
 class PickupServiceImpl implements PickupService {
+
+    private static final Logger log = LoggerFactory.getLogger(PickupServiceImpl.class);
 
     private final PickupRepository pickupRepo;
     private final FarmerService farmerService;
@@ -82,14 +86,26 @@ class PickupServiceImpl implements PickupService {
     }
 
     @Override
-    @Transactional
     public WastePickup markCollected(UUID pickupId, CollectPickupCommand cmd) {
-        WastePickup pickup = loadOrThrow(pickupId);
         String photoUrl = null;
         if (cmd.photo() != null && cmd.photo().length > 0) {
-            String filename = "pickup-" + pickupId + "-" + System.currentTimeMillis() + ".jpg";
-            photoUrl = photoStore.upload(filename, cmd.photo(), "image/jpeg");
+            String ct = cmd.photoContentType() != null ? cmd.photoContentType() : "image/jpeg";
+            String ext = switch (ct) {
+                case "image/png" -> "png";
+                case "image/webp" -> "webp";
+                default -> "jpg";
+            };
+            String filename = "pickups/pickup-" + pickupId + "-" + System.currentTimeMillis() + "." + ext;
+            log.info("Uploading pickup photo: filename={}, contentType={}, sizeBytes={}", filename, ct, cmd.photo().length);
+            photoUrl = photoStore.upload(filename, cmd.photo(), ct);
+            log.info("Pickup photo uploaded: url={}", photoUrl);
         }
+        return persistCollected(pickupId, cmd, photoUrl);
+    }
+
+    @Transactional
+    WastePickup persistCollected(UUID pickupId, CollectPickupCommand cmd, String photoUrl) {
+        WastePickup pickup = loadOrThrow(pickupId);
         BigDecimal payout = cmd.weightKg().multiply(payoutRatePerKg);
         pickup.markCollected(cmd.weightKg(), photoUrl, cmd.notes(), payout);
         WastePickup saved = pickupRepo.save(pickup);

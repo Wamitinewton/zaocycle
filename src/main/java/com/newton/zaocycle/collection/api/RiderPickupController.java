@@ -18,7 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/rider/pickups")
@@ -49,8 +53,12 @@ public class RiderPickupController {
     @GetMapping("/history")
     public ResponseEntity<ApiResponse<List<RiderPickupDetailResponse>>> history(
             @AuthenticationPrincipal AuthenticatedPrincipal principal) {
-        List<RiderPickupDetailResponse> body = pickupQueryService.findByRider(principal.id()).stream()
-                .map(this::enrich)
+        List<WastePickup> pickups = pickupQueryService.findByRider(principal.id());
+        Set<UUID> farmerIds = pickups.stream().map(WastePickup::farmerId).collect(Collectors.toSet());
+        Map<UUID, Farmer> farmerMap = farmerService.findAllByIds(farmerIds).stream()
+                .collect(Collectors.toMap(Farmer::id, Function.identity()));
+        List<RiderPickupDetailResponse> body = pickups.stream()
+                .map(p -> RiderPickupDetailResponse.from(p, farmerMap.get(p.farmerId())))
                 .toList();
         return ResponseEntity.ok(ApiResponse.ok(body));
     }
@@ -67,7 +75,8 @@ public class RiderPickupController {
             @RequestParam(required = false) MultipartFile photo,
             @RequestParam(required = false) String notes) throws IOException {
         byte[] photoBytes = photo != null ? photo.getBytes() : null;
-        CollectPickupCommand cmd = new CollectPickupCommand(weightKg, photoBytes, notes);
+        String contentType = photo != null ? photo.getContentType() : null;
+        CollectPickupCommand cmd = new CollectPickupCommand(weightKg, photoBytes, contentType, notes);
         return ResponseEntity.ok(ApiResponse.ok(enrich(pickupService.markCollected(id, cmd))));
     }
 
